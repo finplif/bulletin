@@ -65,7 +65,7 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
         <div>
           <button
             onClick={() => setShowHoodFilters(!showHoodFilters)}
-            className="text-sm font-medium underline mb-2"
+            className="`px-3 py-1.5 rounded-full text-sm border transition"
           >
             {showHoodFilters ? 'Hide' : 'Filter by Hood'}
           </button>
