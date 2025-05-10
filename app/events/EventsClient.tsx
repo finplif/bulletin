@@ -44,6 +44,11 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
     );
   };
 
+  const clearFilters = () => {
+    setSelectedHoods([]);
+    setSelectedTypes([]);
+  };
+
   const filteredEvents = allEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
@@ -62,77 +67,84 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
       <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
 
       <div className="space-y-6 mb-10">
-        <div>
+        <div className="flex items-center gap-4">
           {showHoodFilters ? (
             <button
               onClick={() => setShowHoodFilters(false)}
-              className="text-sm font-medium underline mb-2"
+              className="text-sm font-medium underline"
             >
               Hide
             </button>
           ) : (
             <button
               onClick={() => setShowHoodFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300 mb-2"
+              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
             >
               Filter by Hood
             </button>
           )}
 
-          {showHoodFilters && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {hoods.map((h) => (
-                <button
-                  key={h}
-                  onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                    selectedHoods.includes(h)
-                      ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                      : 'bg-white text-gray-800 border-gray-300'
-                  }`}
-                >
-                  {h}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div>
           {showTypeFilters ? (
             <button
               onClick={() => setShowTypeFilters(false)}
-              className="text-sm font-medium underline mb-2"
+              className="text-sm font-medium underline"
             >
               Hide
             </button>
           ) : (
             <button
               onClick={() => setShowTypeFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300 mb-2"
+              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
             >
               Filter by Type
             </button>
           )}
 
-          {showTypeFilters && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {types.map((t) => (
-                <button
-                  key={t}
-                  onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                    selectedTypes.includes(t)
-                      ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                      : 'bg-white text-gray-800 border-gray-300'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
+          {(selectedHoods.length > 0 || selectedTypes.length > 0) && (
+            <button
+              onClick={clearFilters}
+              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
+            >
+              Clear Filters
+            </button>
           )}
         </div>
+
+        {showHoodFilters && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {hoods.map((h) => (
+              <button
+                key={h}
+                onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  selectedHoods.includes(h)
+                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
+                    : 'bg-white text-gray-800 border-gray-300'
+                }`}
+              >
+                {h}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {showTypeFilters && (
+          <div className="flex flex-wrap gap-2 mt-2">
+            {types.map((t) => (
+              <button
+                key={t}
+                onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  selectedTypes.includes(t)
+                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
+                    : 'bg-white text-gray-800 border-gray-300'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="space-y-12">
