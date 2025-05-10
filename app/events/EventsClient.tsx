@@ -30,6 +30,8 @@ function formatDate(dateString: string): string {
 function Events({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [showHoodFilters, setShowHoodFilters] = useState(false);
+  const [showTypeFilters, setShowTypeFilters] = useState(false);
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
@@ -61,41 +63,55 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
 
       <div className="space-y-6 mb-10">
         <div>
-          <p className="mb-2 text-sm font-medium">Filter by Hood:</p>
-          <div className="flex flex-wrap gap-2">
-            {hoods.map((h) => (
-              <button
-                key={h}
-                onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedHoods.includes(h)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {h}
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => setShowHoodFilters(!showHoodFilters)}
+            className="text-sm font-medium underline mb-2"
+          >
+            {showHoodFilters ? 'Hide' : 'Filter by Hood'}
+          </button>
+          {showHoodFilters && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {hoods.map((h) => (
+                <button
+                  key={h}
+                  onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                    selectedHoods.includes(h)
+                      ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
+                      : 'bg-white text-gray-800 border-gray-300'
+                  }`}
+                >
+                  {h}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>
-          <p className="mb-2 text-sm font-medium">Filter by Type:</p>
-          <div className="flex flex-wrap gap-2">
-            {types.map((t) => (
-              <button
-                key={t}
-                onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedTypes.includes(t)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => setShowTypeFilters(!showTypeFilters)}
+            className="text-sm font-medium underline mb-2"
+          >
+            {showTypeFilters ? 'Hide' : 'Filter by Type'}
+          </button>
+          {showTypeFilters && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {types.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                    selectedTypes.includes(t)
+                      ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
+                      : 'bg-white text-gray-800 border-gray-300'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -107,7 +123,7 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
               {group.map((event, index) => (
                 <li
                   key={index}
-                  className="py-4"
+                  className="py-5"
                 >
                   <div className="text-sm text-gray-500 mb-1">
                     🕒 {event.time_start} – {event.time_end}
