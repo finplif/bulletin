@@ -63,12 +63,22 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
 
       <div className="space-y-6 mb-10">
         <div>
-          <button
-            onClick={() => setShowHoodFilters(!showHoodFilters)}
-            className="`px-3 py-1.5 rounded-full text-sm border transition"
-          >
-            {showHoodFilters ? 'Hide' : 'Filter by Hood'}
-          </button>
+          {showHoodFilters ? (
+            <button
+              onClick={() => setShowHoodFilters(false)}
+              className="text-sm font-medium underline mb-2"
+            >
+              Hide
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowHoodFilters(true)}
+              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300 mb-2"
+            >
+              Filter by Hood
+            </button>
+          )}
+
           {showHoodFilters && (
             <div className="flex flex-wrap gap-2 mt-2">
               {hoods.map((h) => (
@@ -89,12 +99,22 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
         </div>
 
         <div>
-          <button
-            onClick={() => setShowTypeFilters(!showTypeFilters)}
-            className="text-sm font-medium underline mb-2"
-          >
-            {showTypeFilters ? 'Hide' : 'Filter by Type'}
-          </button>
+          {showTypeFilters ? (
+            <button
+              onClick={() => setShowTypeFilters(false)}
+              className="text-sm font-medium underline mb-2"
+            >
+              Hide
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowTypeFilters(true)}
+              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300 mb-2"
+            >
+              Filter by Type
+            </button>
+          )}
+
           {showTypeFilters && (
             <div className="flex flex-wrap gap-2 mt-2">
               {types.map((t) => (
