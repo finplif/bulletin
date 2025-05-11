@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 
@@ -31,10 +32,7 @@ async function getEvents(): Promise<EventItem[]> {
   const data = await res.json();
   return data.map((e: any) => ({
     ...e,
-    slug: e.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '')
+    slug: e.slug || e.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')
   }));
 }
 
@@ -52,6 +50,10 @@ export default async function EventDetailPage({ params }: { params: { slug: stri
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-2xl mx-auto">
+        <Link href="/events" className="text-sm underline text-gray-600 block mb-6">
+          ← Back to all events
+        </Link>
+
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{event.title}</h1>
         <p className="text-sm text-gray-600 mb-6">{formatDate(event.date)}</p>
 
