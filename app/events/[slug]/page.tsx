@@ -53,7 +53,9 @@ export async function generateStaticParams() {
   return events.map((e) => ({ slug: e.slug }));
 }
 
-export default async function EventPage({ params }: PageProps) {
+export default async function EventPage({ params, }: {
+  params: { slug: string };
+}) {
   const events = await getEvents();
   const event = events.find((e) => e.slug === params.slug);
 
