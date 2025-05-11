@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { DM_Sans } from 'next/font/google';
 import Link from 'next/link';
+import { DM_Sans } from 'next/font/google';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -18,6 +18,10 @@ interface EventItem {
   link: string;
 }
 
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
 function formatDate(dateString: string): string {
   const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
@@ -28,18 +32,29 @@ function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+function getWeekday(date: string): string {
+  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+}
+
+function getTimeBucket(time: string): string {
+  const [hour, minute] = time.split(':').map(Number);
+  const totalMinutes = hour * 60 + minute;
+  if (totalMinutes < 600) return 'Morning';
+  if (totalMinutes < 840) return 'Midday';
+  if (totalMinutes < 1080) return 'Afternoon';
+  return 'Evening';
 }
 
 function Events({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [showHoodFilters, setShowHoodFilters] = useState(false);
-  const [showTypeFilters, setShowTypeFilters] = useState(false);
+  const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
+  const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const timeRanges = ['Morning','Midday','Afternoon','Evening'];
 
   const toggleItem = (value: string, list: string[], setList: (v: string[]) => void) => {
     setList(
@@ -52,15 +67,15 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
   const clearFilters = () => {
     setSelectedHoods([]);
     setSelectedTypes([]);
+    setSelectedWeekdays([]);
+    setSelectedTimes([]);
   };
 
   const filteredEvents = allEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
-    const weekday = getWeekday(e.date);
-    const timeBucket = getTimeBucket(e.time_start);
-    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(weekday);
-    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(timeBucket);
+    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
+    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
     return hoodMatch && typeMatch && weekdayMatch && timeMatch;
   });
 
@@ -71,106 +86,47 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
     return acc;
   }, {} as Record<string, EventItem[]>);
 
-  const getTimeBucket = (time: string): string => {
-  const [hour, minute] = time.split(':').map(Number);
-  const totalMinutes = hour * 60 + minute;
-
-  if (totalMinutes < 600) return 'Morning';     // before 10:00
-  if (totalMinutes < 840) return 'Midday';      // before 2:00 PM
-  if (totalMinutes < 1080) return 'Afternoon';  // before 6:00 PM
-  return 'Evening';                             // 6:00 PM and after
-  };  
-
-  const getWeekday = (date: string): string => {
-  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-  };
-
-  const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
-  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
+  const FilterSection = ({ label, options, selected, setSelected }: { label: string; options: string[]; selected: string[]; setSelected: (v: string[]) => void }) => (
+    <div>
+      <p className="mb-2 text-sm font-medium">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt}
+            onClick={() => toggleItem(opt, selected, setSelected)}
+            className={`px-3 py-1.5 rounded-full text-sm border transition ${
+              selected.includes(opt)
+                ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
+                : 'bg-white text-gray-800 border-gray-300'
+            }`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
 
       <div className="space-y-6 mb-10">
-        <div className="flex items-center gap-4">
-          {showHoodFilters ? (
-            <button
-              onClick={() => setShowHoodFilters(false)}
-              className="text-sm font-medium underline"
-            >
-              Hide
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowHoodFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-            >
-              Filter by Hood
-            </button>
-          )}
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm font-medium">Filter by:</span>
 
-          {showTypeFilters ? (
-            <button
-              onClick={() => setShowTypeFilters(false)}
-              className="text-sm font-medium underline"
-            >
-              Hide
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowTypeFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-            >
-              Filter by Type
-            </button>
-          )}
-
-          {(selectedHoods.length > 0 || selectedTypes.length > 0) && (
-            <button
-              onClick={clearFilters}
-              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
-            >
-              Clear Filters
-            </button>
-          )}
+          <button
+            onClick={clearFilters}
+            className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
+          >
+            Clear Filters
+          </button>
         </div>
 
-        {showHoodFilters && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {hoods.map((h) => (
-              <button
-                key={h}
-                onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedHoods.includes(h)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {h}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {showTypeFilters && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {types.map((t) => (
-              <button
-                key={t}
-                onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedTypes.includes(t)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        )}
+        <FilterSection label="Hood" options={hoods} selected={selectedHoods} setSelected={setSelectedHoods} />
+        <FilterSection label="Type" options={types} selected={selectedTypes} setSelected={setSelectedTypes} />
+        <FilterSection label="Day" options={weekdays} selected={selectedWeekdays} setSelected={setSelectedWeekdays} />
+        <FilterSection label="Time" options={timeRanges} selected={selectedTimes} setSelected={setSelectedTimes} />
       </div>
 
       <div className="space-y-12">
@@ -185,10 +141,10 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
                   </div>
                   <Link
                     href={`/events/${slugify(event.title)}`}
-                     className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
-                    >
-                      {event.title}
-                  </Link> 
+                    className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
+                  >
+                    {event.title}
+                  </Link>
                   <div className="text-sm text-gray-600 mb-0.5">
                     📍 {event.venue}, {event.hood}
                   </div>
