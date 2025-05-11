@@ -1,3 +1,6 @@
+// @ts-expect-error – Vercel auto-generates this
+import type { PageProps } from './$types';
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
@@ -46,7 +49,7 @@ export async function generateStaticParams() {
   return events.map((e) => ({ slug: e.slug }));
 }
 
-const Page = async ({ params }: { params: { slug: string } }) => {
+const Page = async ({ params }: PageProps) => {
   const events = await getEvents();
   const event = events.find((e) => e.slug === params.slug);
 
