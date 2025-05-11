@@ -50,6 +50,7 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
@@ -112,21 +113,41 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
       <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
 
       <div className="space-y-6 mb-10">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm font-medium">Filter by:</span>
+        <div className="flex items-center gap-4">
+          {showFilters ? (
+            <button
+              onClick={() => setShowFilters(false)}
+              className="text-sm font-medium underline"
+            >
+              Hide Filters
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowFilters(true)}
+              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
+            >
+              Filter by
+            </button>
+          )}
 
-          <button
-            onClick={clearFilters}
-            className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
-          >
-            Clear Filters
-          </button>
+          {(selectedHoods.length > 0 || selectedTypes.length > 0 || selectedWeekdays.length > 0 || selectedTimes.length > 0) && (
+            <button
+              onClick={clearFilters}
+              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
 
-        <FilterSection label="Hood" options={hoods} selected={selectedHoods} setSelected={setSelectedHoods} />
-        <FilterSection label="Type" options={types} selected={selectedTypes} setSelected={setSelectedTypes} />
-        <FilterSection label="Day" options={weekdays} selected={selectedWeekdays} setSelected={setSelectedWeekdays} />
-        <FilterSection label="Time" options={timeRanges} selected={selectedTimes} setSelected={setSelectedTimes} />
+        {showFilters && (
+          <>
+            <FilterSection label="Hood" options={hoods} selected={selectedHoods} setSelected={setSelectedHoods} />
+            <FilterSection label="Type" options={types} selected={selectedTypes} setSelected={setSelectedTypes} />
+            <FilterSection label="Day" options={weekdays} selected={selectedWeekdays} setSelected={setSelectedWeekdays} />
+            <FilterSection label="Time" options={timeRanges} selected={selectedTimes} setSelected={setSelectedTimes} />
+          </>
+        )}
       </div>
 
       <div className="space-y-12">
