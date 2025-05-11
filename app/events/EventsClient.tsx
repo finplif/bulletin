@@ -153,10 +153,7 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
             <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
             <ul className="divide-y divide-gray-300/30">
               {group.map((event, index) => (
-                <li
-                  key={index}
-                  className="py-5"
-                >
+                <li key={index} className="py-5">
                   <div className="text-sm text-gray-500 mb-1">
                     🕒 {event.time_start} – {event.time_end}
                   </div>
