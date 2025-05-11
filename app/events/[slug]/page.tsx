@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
-import type { Metadata } from 'next';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -15,12 +14,6 @@ interface EventItem {
   type: string;
   descr: string;
   link: string;
-}
-
-interface PageProps {
-  params: {
-    slug: string;
-  };
 }
 
 function formatDate(dateString: string): string {
@@ -53,7 +46,9 @@ export async function generateStaticParams() {
   return events.map((e) => ({ slug: e.slug }));
 }
 
-export default async function EventPage({ params, }: {
+export default async function EventPage({
+  params,
+}: {
   params: { slug: string };
 }) {
   const events = await getEvents();
