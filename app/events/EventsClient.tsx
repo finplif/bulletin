@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { DM_Sans } from 'next/font/google';
+import Link from 'next/link';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -25,6 +26,10 @@ function formatDate(dateString: string): string {
     year: 'numeric',
   };
   return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
 function Events({ allEvents }: { allEvents: EventItem[] }) {
@@ -157,9 +162,12 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
                   <div className="text-sm text-gray-500 mb-1">
                     🕒 {event.time_start} – {event.time_end}
                   </div>
-                  <div className="text-lg font-medium text-gray-900 mb-0.5">
-                    {event.title}
-                  </div>
+                  <Link
+                    href={`/events/${slugify(event.title)}`}
+                     className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
+                    >
+                      {event.title}
+                  </Link> 
                   <div className="text-sm text-gray-600 mb-0.5">
                     📍 {event.venue}, {event.hood}
                   </div>
