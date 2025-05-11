@@ -1,12 +1,11 @@
-'use client';
-
-import { useState } from 'react';
+import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 interface EventItem {
   title: string;
+  slug: string;
   date: string;
   time_start: string;
   time_end: string;
@@ -19,173 +18,62 @@ interface EventItem {
 
 function formatDate(dateString: string): string {
   const options: Intl.DateTimeFormatOptions = {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
   };
   return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-function Events({ allEvents }: { allEvents: EventItem[] }) {
-  const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [showHoodFilters, setShowHoodFilters] = useState(false);
-  const [showTypeFilters, setShowTypeFilters] = useState(false);
+async function getEvents(): Promise<EventItem[]> {
+  const res = await fetch(
+    'https://api.sheetbest.com/sheets/18fc5c53-3ee1-44bf-a147-dda2473191fd',
+    { cache: 'no-store' }
+  );
+  const data = await res.json();
+  return data.map((e: any) => ({
+    ...e,
+    slug: e.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+  }));
+}
 
-  const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
-  const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
+export async function generateStaticParams() {
+  const events = await getEvents();
+  return events.map((e) => ({ slug: e.slug }));
+}
 
-  const toggleItem = (value: string, list: string[], setList: (v: string[]) => void) => {
-    setList(
-      list.includes(value)
-        ? list.filter((item) => item !== value)
-        : [...list, value]
-    );
-  };
+export default async function EventDetailPage({ params }: { params: { slug: string } }) {
+  const events = await getEvents();
+  const event = events.find((e) => e.slug === params.slug);
 
-  const clearFilters = () => {
-    setSelectedHoods([]);
-    setSelectedTypes([]);
-  };
-
-  const filteredEvents = allEvents.filter((e) => {
-    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
-    return hoodMatch && typeMatch;
-  });
-
-  const groupedByDate = filteredEvents.reduce((acc, event) => {
-    const dateKey = formatDate(event.date);
-    if (!acc[dateKey]) acc[dateKey] = [];
-    acc[dateKey].push(event);
-    return acc;
-  }, {} as Record<string, EventItem[]>);
+  if (!event) notFound();
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
-      <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2 tracking-tight">{event.title}</h1>
+        <p className="text-sm text-gray-600 mb-6">{formatDate(event.date)}</p>
 
-      <div className="space-y-6 mb-10">
-        <div className="flex items-center gap-4">
-          {showHoodFilters ? (
-            <button
-              onClick={() => setShowHoodFilters(false)}
-              className="text-sm font-medium underline"
-            >
-              Hide
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowHoodFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-            >
-              Filter by Hood
-            </button>
-          )}
-
-          {showTypeFilters ? (
-            <button
-              onClick={() => setShowTypeFilters(false)}
-              className="text-sm font-medium underline"
-            >
-              Hide
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowTypeFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-            >
-              Filter by Type
-            </button>
-          )}
-
-          {(selectedHoods.length > 0 || selectedTypes.length > 0) && (
-            <button
-              onClick={clearFilters}
-              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
-            >
-              Clear Filters
-            </button>
-          )}
+        <div className="space-y-2 text-sm">
+          <p>🕒 {event.time_start} – {event.time_end}</p>
+          <p>📍 {event.venue}, {event.hood}</p>
+          <p>🎨 {event.type}</p>
         </div>
 
-        {showHoodFilters && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {hoods.map((h) => (
-              <button
-                key={h}
-                onClick={() => toggleItem(h, selectedHoods, setSelectedHoods)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedHoods.includes(h)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {h}
-              </button>
-            ))}
-          </div>
-        )}
+        <p className="text-gray-800 text-sm mt-6 leading-relaxed whitespace-pre-wrap">{event.descr}</p>
 
-        {showTypeFilters && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {types.map((t) => (
-              <button
-                key={t}
-                onClick={() => toggleItem(t, selectedTypes, setSelectedTypes)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  selectedTypes.includes(t)
-                    ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                    : 'bg-white text-gray-800 border-gray-300'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+        {event.link && (
+          <a
+            href={event.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-6 underline text-[#4B6E47] text-sm"
+          >
+            More info ↗
+          </a>
         )}
-      </div>
-
-      <div className="space-y-12">
-        {Object.entries(groupedByDate).map(([date, group]) => (
-          <section key={date}>
-            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
-            <ul className="divide-y divide-gray-300/30">
-              {group.map((event, index) => (
-                <li
-                  key={index}
-                  className="py-5"
-                >
-                  <div className="text-sm text-gray-500 mb-1">
-                    🕒 {event.time_start} – {event.time_end}
-                  </div>
-                  <div className="text-lg font-medium text-gray-900 mb-0.5">
-                    {event.title}
-                  </div>
-                  <div className="text-sm text-gray-600 mb-0.5">
-                    📍 {event.venue}, {event.hood}
-                  </div>
-                  <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
-                  <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
-                  {event.link && (
-                    <a
-                      href={event.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#4B6E47] underline text-sm"
-                    >
-                      More info ↗
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
       </div>
     </main>
   );
 }
-
-export default Events;
