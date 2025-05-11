@@ -57,7 +57,11 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
   const filteredEvents = allEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
-    return hoodMatch && typeMatch;
+    const weekday = getWeekday(e.date);
+    const timeBucket = getTimeBucket(e.time_start);
+    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(weekday);
+    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(timeBucket);
+    return hoodMatch && typeMatch && weekdayMatch && timeMatch;
   });
 
   const groupedByDate = filteredEvents.reduce((acc, event) => {
@@ -66,6 +70,23 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
     acc[dateKey].push(event);
     return acc;
   }, {} as Record<string, EventItem[]>);
+
+  const getTimeBucket = (time: string): string => {
+  const [hour, minute] = time.split(':').map(Number);
+  const totalMinutes = hour * 60 + minute;
+
+  if (totalMinutes < 600) return 'Morning';     // before 10:00
+  if (totalMinutes < 840) return 'Midday';      // before 2:00 PM
+  if (totalMinutes < 1080) return 'Afternoon';  // before 6:00 PM
+  return 'Evening';                             // 6:00 PM and after
+  };  
+
+  const getWeekday = (date: string): string => {
+  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+  };
+
+  const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
