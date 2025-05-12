@@ -4,7 +4,7 @@ import type { PageProps } from './$types';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
-import { getEvents } from '@/utils';
+import { getEvents } from '../../../utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
