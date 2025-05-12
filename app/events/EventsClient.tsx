@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
+import { getEvents } from '@/utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -16,6 +17,7 @@ interface EventItem {
   type: string;
   descr: string;
   link: string;
+  slug?: string;
 }
 
 function slugify(text: string): string {
@@ -45,12 +47,17 @@ function getTimeBucket(time: string): string {
   return 'Evening';
 }
 
-function Events({ allEvents }: { allEvents: EventItem[] }) {
+function EventsClient() {
+  const [allEvents, setAllEvents] = useState<EventItem[]>([]);
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    getEvents().then(setAllEvents);
+  }, []);
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
@@ -161,7 +168,7 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
                     🕒 {event.time_start} – {event.time_end}
                   </div>
                   <Link
-                    href={`/events/${slugify(event.title)}`}
+                    href={`/events/${event.slug || slugify(event.title)}`}
                     className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                   >
                     {event.title}
@@ -191,4 +198,4 @@ function Events({ allEvents }: { allEvents: EventItem[] }) {
   );
 }
 
-export default Events;
+export default EventsClient;
