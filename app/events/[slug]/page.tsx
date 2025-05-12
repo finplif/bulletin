@@ -4,6 +4,7 @@ import type { PageProps } from './$types';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
+import { getEvents } from '@/utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -17,6 +18,7 @@ interface EventItem {
   type: string;
   descr: string;
   link: string;
+  slug?: string;
 }
 
 function formatDate(dateString: string): string {
@@ -33,25 +35,14 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
-async function getEvents(): Promise<(EventItem & { slug: string })[]> {
-  const res = await fetch('https://api.sheetbest.com/sheets/18fc5c53-3ee1-44bf-a147-dda2473191fd', {
-    cache: 'no-store',
-  });
-  const data = await res.json();
-  return data.map((event: EventItem) => ({
-    ...event,
-    slug: slugify(event.title),
-  }));
-}
-
 export async function generateStaticParams() {
   const events = await getEvents();
-  return events.map((e) => ({ slug: e.slug }));
+  return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
 const Page = async ({ params }: PageProps) => {
-  const events = await getEvents();
-  const event = events.find((e) => e.slug === params.slug);
+  const events: EventItem[] = await getEvents();
+  const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
   if (!event) return notFound();
 
