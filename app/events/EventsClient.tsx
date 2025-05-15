@@ -16,6 +16,7 @@ interface EventItem {
   venue: string;
   type: string;
   descr: string;
+  address?: string;
   link: string;
   slug?: string;
 }
