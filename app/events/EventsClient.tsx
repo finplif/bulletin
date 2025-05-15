@@ -141,17 +141,14 @@ const futureEvents = allEvents.filter((e) => {
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700">
-    date:
-  </label>
-  <input
-    id="start-date"
-    type="date"
-    value={startDate}
-    onChange={(e) => setStartDate(e.target.value)}
-    className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
-  />
-
+          <label htmlFor="start-date" className="text-sm text-gray-700"> date: </label>
+          <input
+            id="start-date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
+          />
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
