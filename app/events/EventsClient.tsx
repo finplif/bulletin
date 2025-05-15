@@ -35,8 +35,10 @@ function formatDate(dateString: string): string {
   });
 }
 
-function getWeekday(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+function getWeekday(dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // local date
+  return date.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
 function getTimeBucket(time: string): string {
@@ -75,12 +77,15 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
     setSelectedTypes([]);
     setSelectedWeekdays([]);
     setSelectedTimes([]);
+    setStartDate('');
   };
 
   const now = new Date();
-  const futureEvents = allEvents.filter(
-  (e) => new Date(`${e.date}T23:59:59`) >= now
-  );
+const futureEvents = allEvents.filter((e) => {
+  const eventDate = new Date(`${e.date}T23:59:59`);
+  const cutoff = startDate ? new Date(`${startDate}T00:00:00`) : now;
+  return eventDate >= cutoff;
+});
 
   const filteredEvents = futureEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
