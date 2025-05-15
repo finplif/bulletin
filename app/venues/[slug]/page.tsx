@@ -5,6 +5,12 @@ import Link from 'next/link';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
+interface VenuePageProps {
+  params: {
+    slug: string;
+  };
+}
+
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
