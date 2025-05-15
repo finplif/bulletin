@@ -54,6 +54,8 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
+
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
@@ -130,17 +132,27 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
       <div className="space-y-4 mb-10">
         <div className="flex items-center gap-4 flex-wrap">
           <span className="text-sm font-medium">Filter by:</span>
-          {renderDropdown('Hood', hoods, selectedHoods, setSelectedHoods)}
-          {renderDropdown('Type', types, selectedTypes, setSelectedTypes)}
-          {renderDropdown('Day', weekdays, selectedWeekdays, setSelectedWeekdays)}
-          {renderDropdown('Time', timeRanges, selectedTimes, setSelectedTimes)}
+          {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
+          {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
+          {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
+          {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
+          <label htmlFor="start-date" className="text-sm text-gray-700">
+    date:
+  </label>
+  <input
+    id="start-date"
+    type="date"
+    value={startDate}
+    onChange={(e) => setStartDate(e.target.value)}
+    className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
+  />
 
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
             >
-              Clear Filters
+              clear filters
             </button>
           )}
         </div>
