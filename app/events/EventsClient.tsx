@@ -53,7 +53,6 @@ function EventsClient() {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [filtersVisible, setFiltersVisible] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
@@ -129,30 +128,21 @@ function EventsClient() {
 
       <div className="space-y-4 mb-10">
         <div className="flex items-center gap-4 flex-wrap">
-          <button
-            onClick={() => setFiltersVisible(!filtersVisible)}
-            className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-          >
-            Filter by
-          </button>
+          <span className="text-sm font-medium">Filter by:</span>
+          {renderDropdown('Hood', hoods, selectedHoods, setSelectedHoods)}
+          {renderDropdown('Type', types, selectedTypes, setSelectedTypes)}
+          {renderDropdown('Day', weekdays, selectedWeekdays, setSelectedWeekdays)}
+          {renderDropdown('Time', timeRanges, selectedTimes, setSelectedTimes)}
+
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
-              className="px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
+              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
             >
               Clear Filters
             </button>
           )}
         </div>
-
-        {filtersVisible && (
-          <div className="flex flex-wrap gap-4">
-            {renderDropdown('Hood', hoods, selectedHoods, setSelectedHoods)}
-            {renderDropdown('Type', types, selectedTypes, setSelectedTypes)}
-            {renderDropdown('Day', weekdays, selectedWeekdays, setSelectedWeekdays)}
-            {renderDropdown('Time', timeRanges, selectedTimes, setSelectedTimes)}
-          </div>
-        )}
       </div>
 
       <div className="space-y-12">
