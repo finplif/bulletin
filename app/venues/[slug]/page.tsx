@@ -66,7 +66,7 @@ export default async function Page(props: any) {
 
         {upcoming.length > 0 && (
           <section className="mb-10">
-            <h2 className="text-xl font-semibold mb-4">Upcoming Events</h2>
+            <h2 className="text-xl font-semibold mb-4">upcoming</h2>
             <ul className="space-y-6">
               {upcoming.map((event, index) => (
                 <li key={index} className="border-b pb-4">
@@ -90,7 +90,7 @@ export default async function Page(props: any) {
                       rel="noopener noreferrer"
                       className="text-sm text-[#4B6E47] underline mt-2 block"
                     >
-                      More info ↗
+                      more info ↗
                     </a>
                   )}
                 </li>
@@ -101,7 +101,7 @@ export default async function Page(props: any) {
 
         {past.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4">Past Events</h2>
+            <h2 className="text-xl font-semibold mb-4">past</h2>
             <ul className="space-y-4">
               {past.map((event, index) => (
                 <li key={index} className="border-b pb-3">
