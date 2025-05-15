@@ -7,6 +7,7 @@ import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../../../utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
+export const dynamic = 'force-dynamic';
 
 interface EventItem {
   title: string;
