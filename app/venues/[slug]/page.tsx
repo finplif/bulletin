@@ -18,15 +18,13 @@ function formatDate(dateString: string): string {
   });
 }
 
-// generateStaticParams allows Next.js to statically generate each venue page
 export async function generateStaticParams() {
   const events = await getEvents();
   const venues = Array.from(new Set(events.map((e) => e.venue)));
   return venues.map((venue) => ({ slug: slugify(venue) }));
 }
 
-// page component
-export default async function VenuePage({ params }: { params: { slug: string } }) {
+export default async function VenuePage({ params }: VenuePageProps) {
   const events = await getEvents();
   const matching = events.filter((e) => slugify(e.venue) === params.slug);
 
