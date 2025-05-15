@@ -53,7 +53,7 @@ function generateICS(event: EventItem) {
   const formatDateTime = (date: string, time: string) => {
     const [hour, minute] = time.split(':').map(Number);
     const [y, m, d] = date.split('-').map(Number);
-    return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(min)}00`;
+    return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(minute)}00`;
   };
 
   const start = formatDateTime(event.date, event.time_start);
