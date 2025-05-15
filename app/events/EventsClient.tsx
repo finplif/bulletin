@@ -25,13 +25,14 @@ function slugify(text: string): string {
 }
 
 function formatDate(dateString: string): string {
-  const options: Intl.DateTimeFormatOptions = {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // JS months are 0-based
+  return date.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
-  };
-  return new Date(dateString).toLocaleDateString('en-US', options);
+  });
 }
 
 function getWeekday(date: string): string {
