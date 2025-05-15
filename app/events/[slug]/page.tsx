@@ -6,6 +6,8 @@ import { DM_Sans } from 'next/font/google';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
+export const dynamic = 'force-dynamic';
+
 function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
@@ -18,8 +20,6 @@ function formatDate(dateString: string) {
     year: 'numeric',
   });
 }
-
-export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const events = await getEvents();
@@ -34,7 +34,7 @@ type Props = {
   };
 };
 
-export default async function EventPage({ params }: Props) {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
@@ -76,3 +76,4 @@ export default async function EventPage({ params }: Props) {
     </main>
   );
 }
+export default Page
