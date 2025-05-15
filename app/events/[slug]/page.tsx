@@ -18,6 +18,7 @@ interface EventItem {
   venue: string;
   type: string;
   descr: string;
+  address?: string;
   link: string;
   slug?: string;
 }
@@ -34,6 +35,16 @@ function formatDate(dateString: string): string {
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
+function generateGoogleCalendarLink(event: EventItem): string {
+  const start = `${event.date}T${event.time_start.replace(':', '')}00`;
+  const end = `${event.date}T${event.time_end.replace(':', '')}00`;
+  const details = encodeURIComponent(event.descr || '');
+  const location = encodeURIComponent(event.address || `${event.venue}`);
+  const title = encodeURIComponent(event.title);
+
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}&sf=true&output=xml`;
 }
 
 export async function generateStaticParams() {
@@ -80,6 +91,15 @@ const Page = async ({ params }: PageProps) => {
             more info ↗
           </a>
         )}
+
+        <a
+          href={generateGoogleCalendarLink(event)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm underline text-[#4B6E47]"
+          >  
+          + add to Google Calendar
+        </a>
       </div>
     </main>
   );
