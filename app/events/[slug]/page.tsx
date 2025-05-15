@@ -50,11 +50,12 @@ function generateGoogleCalendarLink(event: EventItem): string {
 function generateICS(event: EventItem) {
   const pad = (n: number) => String(n).padStart(2, '0');
 
-  const formatDateTime = (date: string, time: string) => {
-    const [hour, minute] = time.split(':').map(Number);
-    const [y, m, d] = date.split('-').map(Number);
-    return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(minute)}00`;
-  };
+function formatDateTime(date: string, time: string) {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const [hour, minute] = time.split(':').map(Number);
+  const [y, m, d] = date.split('-').map(Number);
+  return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(minute)}00`;
+}
 
   const start = formatDateTime(event.date, event.time_start);
   const end = formatDateTime(event.date, event.time_end);
