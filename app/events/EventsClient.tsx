@@ -49,7 +49,6 @@ function getTimeBucket(time: string): string {
 }
 
 function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
-  const [allEvents, setAllEvents] = useState<EventItem[]>([]);
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
