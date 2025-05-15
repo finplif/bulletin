@@ -28,12 +28,6 @@ export async function generateStaticParams() {
   }));
 }
 
-type Props = {
-  params: {
-    slug: string;
-  };
-};
-
 const Page = async ({ params }: { params: { slug: string } }) => {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
