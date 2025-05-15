@@ -53,7 +53,8 @@ function EventsClient() {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [showFilters, setShowFilters] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     getEvents().then(setAllEvents);
@@ -94,24 +95,31 @@ function EventsClient() {
     return acc;
   }, {} as Record<string, EventItem[]>);
 
-  const FilterSection = ({ label, options, selected, setSelected }: { label: string; options: string[]; selected: string[]; setSelected: (v: string[]) => void }) => (
-    <div>
-      <p className="mb-2 text-sm font-medium">{label}</p>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => (
-          <button
-            key={opt}
-            onClick={() => toggleItem(opt, selected, setSelected)}
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${
-              selected.includes(opt)
-                ? 'bg-[#1F1F1F] text-white border-[#1F1F1F]'
-                : 'bg-white text-gray-800 border-gray-300'
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
+  const renderDropdown = (label: string, options: string[], selected: string[], setSelected: (v: string[]) => void) => (
+    <div className="relative">
+      <button
+        className={`px-3 py-1.5 rounded-full text-sm border transition ${
+          openDropdown === label ? 'bg-black text-white border-black' : 'bg-white text-gray-800 border-gray-300'
+        }`}
+        onClick={() => setOpenDropdown(openDropdown === label ? null : label)}
+      >
+        {label}
+      </button>
+      {openDropdown === label && (
+        <div className="absolute left-0 z-10 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md">
+          {options.map((opt) => (
+            <button
+              key={opt}
+              onClick={() => toggleItem(opt, selected, setSelected)}
+              className={`block w-full text-left px-4 py-2 text-sm ${
+                selected.includes(opt) ? 'bg-gray-100 font-medium' : 'text-gray-700'
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 
@@ -119,41 +127,31 @@ function EventsClient() {
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
 
-      <div className="space-y-6 mb-10">
-        <div className="flex items-center gap-4">
-          {showFilters ? (
-            <button
-              onClick={() => setShowFilters(false)}
-              className="text-sm font-medium underline"
-            >
-              Hide Filters
-            </button>
-          ) : (
-            <button
-              onClick={() => setShowFilters(true)}
-              className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
-            >
-              Filter by
-            </button>
-          )}
-
-          {(selectedHoods.length > 0 || selectedTypes.length > 0 || selectedWeekdays.length > 0 || selectedTimes.length > 0) && (
+      <div className="space-y-4 mb-10">
+        <div className="flex items-center gap-4 flex-wrap">
+          <button
+            onClick={() => setFiltersVisible(!filtersVisible)}
+            className="px-3 py-1.5 rounded-full text-sm border bg-white text-gray-800 border-gray-300"
+          >
+            Filter by
+          </button>
+          {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
-              className="ml-auto px-3 py-1.5 rounded-full text-sm bg-[#1F1F1F] text-white hover:bg-gray-800 transition"
+              className="px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
             >
               Clear Filters
             </button>
           )}
         </div>
 
-        {showFilters && (
-          <>
-            <FilterSection label="Hood" options={hoods} selected={selectedHoods} setSelected={setSelectedHoods} />
-            <FilterSection label="Type" options={types} selected={selectedTypes} setSelected={setSelectedTypes} />
-            <FilterSection label="Day" options={weekdays} selected={selectedWeekdays} setSelected={setSelectedWeekdays} />
-            <FilterSection label="Time" options={timeRanges} selected={selectedTimes} setSelected={setSelectedTimes} />
-          </>
+        {filtersVisible && (
+          <div className="flex flex-wrap gap-4">
+            {renderDropdown('Hood', hoods, selectedHoods, setSelectedHoods)}
+            {renderDropdown('Type', types, selectedTypes, setSelectedTypes)}
+            {renderDropdown('Day', weekdays, selectedWeekdays, setSelectedWeekdays)}
+            {renderDropdown('Time', timeRanges, selectedTimes, setSelectedTimes)}
+          </div>
         )}
       </div>
 
