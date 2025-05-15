@@ -1,4 +1,4 @@
-import { getEvents } from '../../../utils';
+import { getEvents } from '../../utils';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 import Link from 'next/link';
