@@ -1,4 +1,4 @@
-import { getEvents } from '../../utils';
+import { getEvents } from '../utils';
 import Header from '../components/Header';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
