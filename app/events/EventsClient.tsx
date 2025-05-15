@@ -79,7 +79,10 @@ function EventsClient() {
     setSelectedTimes([]);
   };
 
-  const filteredEvents = allEvents.filter((e) => {
+  const now = new Date();
+  const futureEvents = allEvents.filter((e) => new Date(e.date) >= now);
+
+  const filteredEvents = futureEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
@@ -162,7 +165,7 @@ function EventsClient() {
                     {event.title}
                   </Link>
                   <div className="text-sm text-gray-600 mb-0.5">
-                    📍 {event.venue}, {event.hood}
+                    📍 <Link href={`/venues/${slugify(event.venue)}`} className="underline hover:text-black">{event.venue}</Link>, {event.hood}
                   </div>
                   <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
