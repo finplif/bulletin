@@ -4,6 +4,7 @@ import { DM_Sans } from 'next/font/google';
 import Link from 'next/link';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
+export const dynamic = 'force-dynamic';
 
 function slugify(text: string): string {
   return text
