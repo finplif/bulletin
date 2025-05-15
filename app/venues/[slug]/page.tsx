@@ -59,7 +59,7 @@ export default async function Page(props: any) {
           href="/venues"
           className="text-sm underline text-gray-600 block mb-6"
         >
-          ← Back to all venues
+          ← all venues
         </Link>
 
         <h1 className="text-3xl font-bold mb-6 tracking-tight">{venueName}</h1>
