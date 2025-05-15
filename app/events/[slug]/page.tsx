@@ -77,7 +77,7 @@ const Page = async ({ params }: PageProps) => {
             rel="noopener noreferrer"
             className="inline-block mt-6 underline text-[#4B6E47] text-sm"
           >
-            More info ↗
+            more info ↗
           </a>
         )}
       </div>
