@@ -131,7 +131,7 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
 
       <div className="space-y-4 mb-10">
         <div className="flex items-center gap-4 flex-wrap">
-          <span className="text-sm font-medium">Filter by:</span>
+          <span className="text-sm font-medium">filter by:</span>
           {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
