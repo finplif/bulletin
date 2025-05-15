@@ -51,7 +51,7 @@ const Page = async ({ params }: PageProps) => {
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-2xl mx-auto">
         <Link href="/events" className="text-sm underline text-gray-600 block mb-6">
-          ← Back to all events
+          ← all events
         </Link>
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{event.title}</h1>
