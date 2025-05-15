@@ -18,21 +18,23 @@ function formatDate(dateString: string): string {
   });
 }
 
+// generateStaticParams allows Next.js to statically generate each venue page
 export async function generateStaticParams() {
   const events = await getEvents();
   const venues = Array.from(new Set(events.map((e) => e.venue)));
   return venues.map((venue) => ({ slug: slugify(venue) }));
 }
 
+// page component
 export default async function VenuePage({ params }: { params: { slug: string } }) {
   const events = await getEvents();
-  const matching = events.filter(e => slugify(e.venue) === params.slug);
+  const matching = events.filter((e) => slugify(e.venue) === params.slug);
 
   if (matching.length === 0) return notFound();
 
   const now = new Date();
-  const upcoming = matching.filter(e => new Date(e.date) >= now);
-  const past = matching.filter(e => new Date(e.date) < now);
+  const upcoming = matching.filter((e) => new Date(e.date) >= now);
+  const past = matching.filter((e) => new Date(e.date) < now);
   const venueName = matching[0].venue;
 
   return (
@@ -50,13 +52,20 @@ export default async function VenuePage({ params }: { params: { slug: string } }
             <ul className="space-y-6">
               {upcoming.map((event, index) => (
                 <li key={index} className="border-b pb-4">
-                  <p className="text-sm text-gray-500 mb-1">🕒 {event.time_start} – {event.time_end}</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    🕒 {event.time_start} – {event.time_end}
+                  </p>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">{event.title}</h3>
                   <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
                   <p className="text-sm text-gray-500 italic">🎨 {event.type}</p>
                   <p className="text-sm text-gray-700 mt-1">{event.descr}</p>
                   {event.link && (
-                    <a href={event.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[#4B6E47] underline mt-2 block">
+                    <a
+                      href={event.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-[#4B6E47] underline mt-2 block"
+                    >
                       More info ↗
                     </a>
                   )}
@@ -72,7 +81,9 @@ export default async function VenuePage({ params }: { params: { slug: string } }
             <ul className="space-y-4">
               {past.map((event, index) => (
                 <li key={index} className="border-b pb-3">
-                  <p className="text-sm text-gray-500 mb-0.5">{formatDate(event.date)} — {event.title}</p>
+                  <p className="text-sm text-gray-500 mb-0.5">
+                    {formatDate(event.date)} — {event.title}
+                  </p>
                 </li>
               ))}
             </ul>
