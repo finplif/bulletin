@@ -35,7 +35,11 @@ type PageProps = {
   };
 };
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const events = await getEvents();
   const matching = events.filter(
     (e) => slugify(e.venue) === params.slug
