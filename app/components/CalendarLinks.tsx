@@ -1,20 +1,27 @@
-'use client';
+import React from 'react';
 
-import { EventItem } from '../types';
+interface CalendarLinksProps {
+  title: string;
+  date: string; // YYYY-MM-DD
+  timeStart: string; // HH:mm
+  timeEnd: string; // HH:mm
+  description?: string;
+  location: string;
+}
 
-function pad(n: number) {
+function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-function formatDateTime(date: string, time: string) {
+function formatDateTime(date: string, time: string): string {
   const [hour, minute] = time.split(':').map(Number);
   const [y, m, d] = date.split('-').map(Number);
   return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(minute)}00`;
 }
 
-function generateICS(event: EventItem) {
-  const start = formatDateTime(event.date, event.time_start);
-  const end = formatDateTime(event.date, event.time_end);
+function generateICS({ title, date, timeStart, timeEnd, description = '', location }: CalendarLinksProps) {
+  const start = formatDateTime(date, timeStart);
+  const end = formatDateTime(date, timeEnd);
 
   const content = [
     'BEGIN:VCALENDAR',
@@ -22,45 +29,51 @@ function generateICS(event: EventItem) {
     'BEGIN:VEVENT',
     `DTSTART:${start}`,
     `DTEND:${end}`,
-    `SUMMARY:${event.title}`,
-    `DESCRIPTION:${event.descr || ''}`,
-    `LOCATION:${event.address || event.venue}`,
+    `SUMMARY:${title}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${location}`,
     'END:VEVENT',
-    'END:VCALENDAR',
+    'END:VCALENDAR'
   ].join('\r\n');
 
   return new Blob([content], { type: 'text/calendar;charset=utf-8' });
 }
 
-export default function CalendarLinks({ event }: { event: EventItem }) {
-  const handleDownload = () => {
-    const blob = generateICS(event);
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+function generateGoogleCalendarLink({ title, date, timeStart, timeEnd, description = '', location }: CalendarLinksProps) {
+  const start = `${date}T${timeStart.replace(':', '')}00`;
+  const end = `${date}T${timeEnd.replace(':', '')}00`;
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(description)}&location=${encodeURIComponent(location)}&sf=true&output=xml`;
+}
 
+const CalendarLinks: React.FC<CalendarLinksProps> = ({ title, date, timeStart, timeEnd, description, location }) => {
   return (
-    <div className="mt-6 space-x-4 text-sm">
+    <div className="mt-6 space-x-4">
       <a
-        href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDateTime(event.date, event.time_start)}/${formatDateTime(event.date, event.time_end)}&details=${encodeURIComponent(event.descr || '')}&location=${encodeURIComponent(event.address || event.venue)}&sf=true&output=xml`}
+        href={generateGoogleCalendarLink({ title, date, timeStart, timeEnd, description, location })}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline text-[#4B6E47]"
+        className="text-sm underline text-[#4B6E47]"
       >
-        + Add to Google Calendar
+        + add to Google Calendar
       </a>
       <button
-        onClick={handleDownload}
-        className="underline text-[#4B6E47]"
+        onClick={() => {
+          const blob = generateICS({ title, date, timeStart, timeEnd, description, location });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${title.replace(/\s+/g, '_')}.ics`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }}
+        className="text-sm underline text-[#4B6E47]"
       >
         + Download for Apple/Outlook
       </button>
     </div>
   );
-}
+};
+
+export default CalendarLinks;
