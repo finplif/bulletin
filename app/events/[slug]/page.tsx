@@ -6,13 +6,11 @@ import { DM_Sans } from 'next/font/google';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
-export const dynamic = 'force-dynamic';
-
-function slugify(text: string): string {
+function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -21,14 +19,14 @@ function formatDate(dateString: string): string {
   });
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   const events = await getEvents();
-  return events.map((e) => ({
-    slug: e.slug || slugify(e.title),
-  }));
+  return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function EventPage({ params }: { params: { slug: string } }) {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
@@ -46,7 +44,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
         <div className="space-y-2 text-sm">
           <p>🕒 {event.time_start} – {event.time_end}</p>
-          <p>📍 <Link href={`/venues/${slugify(event.venue)}`} className="underline hover:text-black">{event.venue}</Link>, {event.hood}</p>
+          <p>
+            📍 <Link href={`/venues/${slugify(event.venue)}`} className="underline hover:text-black">{event.venue}</Link>, {event.hood}
+          </p>
           <p>🎨 {event.type}</p>
         </div>
 
@@ -63,16 +63,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
           </a>
         )}
 
-        <div className="mt-6">
-          <CalendarLinks
-            title={event.title}
-            date={event.date}
-            timeStart={event.time_start}
-            timeEnd={event.time_end}
-            description={event.descr}
-            location={event.address || event.venue}
-          />
-        </div>
+        <CalendarLinks event={event} />
       </div>
     </main>
   );
