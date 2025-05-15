@@ -55,10 +55,6 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  useEffect(() => {
-    getEvents().then(setAllEvents);
-  }, []);
-
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
   const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
