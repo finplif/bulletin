@@ -30,7 +30,7 @@ export async function generateStaticParams() {
   return venues.map((venue) => ({ slug: slugify(venue) }));
 }
 
-export default async function VenuePage({ params }: VenuePageProps) {
+export default async function VenuePage({ params }: { params: { slug: string } }) {
   const events = await getEvents();
   const matching = events.filter((e) => slugify(e.venue) === params.slug);
 
