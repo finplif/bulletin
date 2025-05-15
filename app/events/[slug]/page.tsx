@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getEvents } from '../../../utils';
-import CalendarLinks from '../../components/CalendarLinks';
+import CalendarLinks from '../../components/calendarlinks';
 import { DM_Sans } from 'next/font/google';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
@@ -23,10 +23,18 @@ export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const events = await getEvents();
-  return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
+  return events.map((e) => ({
+    slug: e.slug || slugify(e.title),
+  }));
 }
 
-export default async function EventPage({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string;
+  };
+};
+
+export default async function EventPage({ params }: Props) {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
