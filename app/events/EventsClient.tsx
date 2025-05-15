@@ -80,7 +80,9 @@ function EventsClient() {
   };
 
   const now = new Date();
-  const futureEvents = allEvents.filter((e) => new Date(e.date) >= now);
+  const futureEvents = allEvents.filter(
+  (e) => new Date(`${e.date}T23:59:59`) >= now
+  );
 
   const filteredEvents = futureEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
