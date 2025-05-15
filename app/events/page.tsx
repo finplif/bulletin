@@ -1,5 +1,6 @@
 import Header from '../components/Header';
 import EventsClient from './EventsClient';
+import { getEvents } from '../../utils';
 
 export const dynamic = 'force-dynamic';
 
