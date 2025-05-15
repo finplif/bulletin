@@ -47,6 +47,34 @@ function generateGoogleCalendarLink(event: EventItem): string {
   return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}&sf=true&output=xml`;
 }
 
+function generateICS(event: EventItem) {
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const formatDateTime = (date: string, time: string) => {
+    const [hour, minute] = time.split(':').map(Number);
+    const [y, m, d] = date.split('-').map(Number);
+    return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(min)}00`;
+  };
+
+  const start = formatDateTime(event.date, event.time_start);
+  const end = formatDateTime(event.date, event.time_end);
+
+  const content = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'BEGIN:VEVENT',
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${event.title}`,
+    `DESCRIPTION:${event.descr || ''}`,
+    `LOCATION:${event.address || event.venue}`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  return new Blob([content], { type: 'text/calendar;charset=utf-8' });
+}
+
 export async function generateStaticParams() {
   const events = await getEvents();
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
@@ -100,6 +128,22 @@ const Page = async ({ params }: PageProps) => {
           >  
           + add to Google Calendar
         </a>
+        <button
+          onClick={() => {
+            const blob = generateICS(event);
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }}
+          className="text-sm text-[#4B6E47] underline ml-4"
+        >
+          + Download for Apple/Outlook
+        </button>
       </div>
     </main>
   );
