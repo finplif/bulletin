@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getEvents } from '../../../utils';
+import { getEvents } from '../../utils';
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
