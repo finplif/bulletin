@@ -106,7 +106,7 @@ export default async function Page(props: any) {
               {past.map((event, index) => (
                 <li key={index} className="border-b pb-3">
                   <p className="text-sm text-gray-500 mb-0.5">
-                    {formatDate(event.date)} — {event.title}
+                    {event.date} — {event.title}
                   </p>
                 </li>
               ))}
