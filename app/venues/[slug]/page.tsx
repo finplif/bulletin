@@ -30,13 +30,11 @@ export async function generateStaticParams() {
   }));
 }
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
+type VenuePageProps = {
+  params: { slug: string }
+}
 
-export default async function Page(props: any) {
+export default async function Page({ params }: VenuePageProps) {
   const { params } = props;
   const events = await getEvents();
   const matching = events.filter(
