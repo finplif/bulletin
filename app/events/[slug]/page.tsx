@@ -1,4 +1,4 @@
-// @ts-expect-error – Vercel auto-generates this
+// @ts-expect-error
 import type { PageProps } from './$types';
 
 import Link from 'next/link';
