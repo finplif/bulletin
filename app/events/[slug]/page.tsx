@@ -3,15 +3,8 @@ import { getEvents } from '../../utils';
 
 export const dynamic = 'force-dynamic';
 
-type VenueProps = {
-  params: { slug: string }
-}
-
 function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
 interface EventParams {
