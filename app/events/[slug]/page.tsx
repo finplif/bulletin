@@ -1,26 +1,13 @@
-import { notFound } from 'next/navigation';
+// @ts-expect-error – Vercel auto-generates this
+import type { PageProps } from './$types';
+
 import Link from 'next/link';
-import { getEvents } from '../../../utils';
+import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
+import { getEvents } from '../../utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
-
 export const dynamic = 'force-dynamic';
-
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-}
-
-function formatDate(dateString: string): string {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
 
 interface EventItem {
   title: string;
@@ -31,7 +18,59 @@ interface EventItem {
   venue: string;
   type: string;
   descr: string;
+  address?: string;
+  link: string;
   slug?: string;
+}
+
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+}
+
+function generateGoogleCalendarLink(event: EventItem): string {
+  const start = `${event.date}T${event.time_start.replace(':', '')}00`;
+  const end = `${event.date}T${event.time_end.replace(':', '')}00`;
+  const details = encodeURIComponent(event.descr || '');
+  const location = encodeURIComponent(event.address || event.venue);
+  const title = encodeURIComponent(event.title);
+
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}&sf=true&output=xml`;
+}
+
+function formatDateTime(date: string, time: string) {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const [hour, minute] = time.split(':').map(Number);
+  const [y, m, d] = date.split('-').map(Number);
+  return `${y}${pad(m)}${pad(d)}T${pad(hour)}${pad(minute)}00`;
+}
+
+function generateICS(event: EventItem) {
+  const start = formatDateTime(event.date, event.time_start);
+  const end = formatDateTime(event.date, event.time_end);
+
+  const content = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'BEGIN:VEVENT',
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${event.title}`,
+    `DESCRIPTION:${event.descr || ''}`,
+    `LOCATION:${event.address || event.venue}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  return new Blob([content], { type: 'text/calendar;charset=utf-8' });
 }
 
 export async function generateStaticParams() {
@@ -39,8 +78,8 @@ export async function generateStaticParams() {
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const events = await getEvents();
+const Page = async ({ params }: PageProps) => {
+  const events: EventItem[] = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
   if (!event) return notFound();
@@ -77,7 +116,36 @@ export default async function Page({ params }: { params: { slug: string } }) {
             more info ↗
           </a>
         )}
+
+        <div className="mt-6 space-x-4">
+          <a
+            href={generateGoogleCalendarLink(event)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm underline text-[#4B6E47]"
+          >
+            + add to Google Calendar
+          </a>
+          <button
+            onClick={() => {
+              const blob = generateICS(event);
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = `${event.title.replace(/\s+/g, '_')}.ics`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }}
+            className="text-sm text-[#4B6E47] underline"
+          >
+            + Download for Apple/Outlook
+          </button>
+        </div>
       </div>
     </main>
   );
-}
+};
+
+export default Page;
