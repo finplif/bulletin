@@ -16,7 +16,7 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
-export default async function Page({ params }: { params: EventParams }) {
+export default async function Page({ params }: { params: { slug: string } }) {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
