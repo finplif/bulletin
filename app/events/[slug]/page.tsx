@@ -14,7 +14,7 @@ function slugify(text: string): string {
     .replace(/(^-|-$)+/g, '');
 }
 
-interface Params {
+interface EventParams {
   slug: string;
 }
 
@@ -23,7 +23,7 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
-export default async function Page({ params }: { params: Params }) {
+export default async function Page({ params }: { params: EventParams }) {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
