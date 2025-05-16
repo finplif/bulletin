@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
-import { getEvents } from '../../utils';
+import { getEvents } from '../utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -16,7 +16,6 @@ interface EventItem {
   venue: string;
   type: string;
   descr: string;
-  address?: string;
   link: string;
   slug?: string;
 }
@@ -36,10 +35,8 @@ function formatDate(dateString: string): string {
   });
 }
 
-function getWeekday(dateString: string): string {
-  const [year, month, day] = dateString.split('-').map(Number);
-  const date = new Date(year, month - 1, day); // local date
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
+function getWeekday(date: string): string {
+  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
 }
 
 function getTimeBucket(time: string): string {
@@ -57,8 +54,6 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState<string>('');
-
 
   const hoods = Array.from(new Set(allEvents.map((e) => e.hood))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
@@ -78,15 +73,12 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
     setSelectedTypes([]);
     setSelectedWeekdays([]);
     setSelectedTimes([]);
-    setStartDate('');
   };
 
   const now = new Date();
-const futureEvents = allEvents.filter((e) => {
-  const eventDate = new Date(`${e.date}T23:59:59`);
-  const cutoff = startDate ? new Date(`${startDate}T00:00:00`) : now;
-  return eventDate >= cutoff;
-});
+  const futureEvents = allEvents.filter(
+  (e) => new Date(`${e.date}T23:59:59`) >= now
+  );
 
   const filteredEvents = futureEvents.filter((e) => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
@@ -137,25 +129,18 @@ const futureEvents = allEvents.filter((e) => {
 
       <div className="space-y-4 mb-10">
         <div className="flex items-center gap-4 flex-wrap">
-          <span className="text-sm font-medium">filter by:</span>
-          {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
-          {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
-          {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
-          {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700"> date: </label>
-          <input
-            id="start-date"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
-          />
+          <span className="text-sm font-medium">Filter by:</span>
+          {renderDropdown('Hood', hoods, selectedHoods, setSelectedHoods)}
+          {renderDropdown('Type', types, selectedTypes, setSelectedTypes)}
+          {renderDropdown('Day', weekdays, selectedWeekdays, setSelectedWeekdays)}
+          {renderDropdown('Time', timeRanges, selectedTimes, setSelectedTimes)}
+
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
             >
-              clear filters
+              Clear Filters
             </button>
           )}
         </div>
