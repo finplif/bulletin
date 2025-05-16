@@ -7,7 +7,7 @@ function slugify(text: string): string {
 
 export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const events = await getEvents();
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
