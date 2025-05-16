@@ -35,7 +35,6 @@ type VenuePageProps = {
 }
 
 export default async function Page({ params }: VenuePageProps) {
-  const { params } = props;
   const events = await getEvents();
   const matching = events.filter(
     (e) => slugify(e.venue) === params.slug
