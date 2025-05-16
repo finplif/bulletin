@@ -35,8 +35,10 @@ function formatDate(dateString: string): string {
   });
 }
 
-function getWeekday(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+function getWeekday(dateString: string): string {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // local date
+  return date.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
 function getTimeBucket(time: string): string {
