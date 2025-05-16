@@ -1,4 +1,4 @@
-import { getEvents } from '../../utils';
+import { getEvents } from '../../../utils';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 import Link from 'next/link';
@@ -30,11 +30,14 @@ export async function generateStaticParams() {
   }));
 }
 
-type VenuePageProps = {
-  params: { slug: string }
-}
+type PageProps = {
+  params: {
+    slug: string;
+  };
+};
 
-export default async function Page({ params }: VenuePageProps) {
+export default async function Page(props: any) {
+  const { params } = props;
   const events = await getEvents();
   const matching = events.filter(
     (e) => slugify(e.venue) === params.slug
