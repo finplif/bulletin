@@ -1,18 +1,25 @@
 import { notFound } from 'next/navigation';
 import { getEvents } from '../../utils';
 
+export const dynamic = 'force-dynamic';
+
 function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
 }
 
-export const dynamic = 'force-dynamic';
+interface Params {
+  slug: string;
+}
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const events = await getEvents();
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: Params }) {
   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
