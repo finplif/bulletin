@@ -67,8 +67,8 @@ const Page = async ({ params }: PageProps) => {
   {event.venue}
 </Link>
           <p>{event.address && (
-  <p className="text-sm text-gray-600">📍 {event.address}</p>
-)}, {event.hood}</p>
+  <p className="text-sm text-gray-600">📍 {event.address}, {event.hood} </p>
+)}
           
           <p>🎨 {event.type}</p>
         </div>
