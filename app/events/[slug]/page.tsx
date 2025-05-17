@@ -60,16 +60,22 @@ const Page = async ({ params }: PageProps) => {
 
         <div className="space-y-2 text-sm">
           <p>🕒 {event.time_start} – {event.time_end}</p>
-          📍 <Link
-  href={`/venues/${slugify(event.venue)}`}
-  className="underline hover:text-black"
->
-  {event.venue}
-</Link>
-          <p>{event.address && (
-  <p className="text-sm text-gray-600">📍 {event.address}, {event.hood} </p>
-)}
-          
+        
+          <p>
+            📍 <Link
+              href={`/venues/${slugify(event.venue)}`}
+              className="underline hover:text-black"
+            >
+              {event.venue}
+            </Link>
+          </p>
+        
+          {event.address && (
+            <p className="text-sm text-gray-600">
+              {event.address}, {event.hood}
+            </p>
+          )}
+        
           <p>🎨 {event.type}</p>
         </div>
 
