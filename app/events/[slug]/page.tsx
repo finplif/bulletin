@@ -62,12 +62,9 @@ const Page = async ({ params }: PageProps) => {
           <p>🕒 {event.time_start} – {event.time_end}</p>
         
           <p>
-            📍 <Link
-              href={`/venues/${slugify(event.venue)}`}
-              className="underline hover:text-black"
-            >
-              {event.venue}
-            </Link>
+            📍 <Link href={`/venues/${slugify(event.venue.name)}`}>
+                  {event.venue.name}
+                </Link>
           </p>
         
           {event.address && (
