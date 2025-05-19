@@ -19,8 +19,8 @@ interface EventItem {
   venue?: {
     id: number;
     name: string;
-    address: string;
-    hood: string;
+    address?: string;
+    hood?: string;
   };
 }
 
@@ -63,17 +63,13 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [startDate, setStartDate] = useState<string>('');
 
 
-  const hoods = Array.from(new Set(allEvents.map((e) => e.venue?.hood || ''))).filter(Boolean).sort();
+  const hoods = Array.from(new Set(allEvents.map((e) => e.venue?.hood).filter(Boolean))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
-  const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const timeRanges = ['Morning','Midday','Afternoon','Evening'];
+  const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
 
   const toggleItem = (value: string, list: string[], setList: (v: string[]) => void) => {
-    setList(
-      list.includes(value)
-        ? list.filter((item) => item !== value)
-        : [...list, value]
-    );
+    setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
 
   const clearFilters = () => {
@@ -85,14 +81,10 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   };
 
   const now = new Date();
-const futureEvents = allEvents.filter((e) => {
-  const eventDate = new Date(`${e.date}T23:59:59`);
-  const cutoff = startDate ? new Date(`${startDate}T00:00:00`) : now;
-  return eventDate >= cutoff;
-});
+  const futureEvents = allEvents.filter((e) => new Date(`${e.date}T23:59:59`) >= now);
 
   const filteredEvents = futureEvents.filter((e) => {
-    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood);
+    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood || '');
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
@@ -145,16 +137,14 @@ const futureEvents = allEvents.filter((e) => {
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700">
-    date:
-  </label>
-  <input
-    id="start-date"
-    type="date"
-    value={startDate}
-    onChange={(e) => setStartDate(e.target.value)}
-    className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
-  />
+          <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
+          <input
+            id="start-date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
+          />
 
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
@@ -184,13 +174,8 @@ const futureEvents = allEvents.filter((e) => {
                     {event.title}
                   </Link>
                   <div className="text-sm text-gray-600 mb-0.5">
-                    📍 {event.venue.name}, {event.venue.hood}
+                    📍 {event.venue?.name}, {event.venue?.hood}
                   </div>
-                  {event.venue?.address && (
-                    <div className="text-sm text-gray-600 mb-0.5">
-                      🗺️ {event.venue.address}
-                    </div>
-                  )}
                   <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
                   {event.link && (
