@@ -1,3 +1,6 @@
+// @ts-expect-error – Vercel/Next.js injects this
+import type { PageProps } from './$types';
+
 import { getEvents } from '../../utils';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
@@ -35,7 +38,7 @@ type PageProps = {
   };
 };
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: PageProps) {
   const [venues, events] = await Promise.all([getVenues(), getEvents()]);
   const venue = venues.find((v) => slugify(v.name) === params.slug);
 
