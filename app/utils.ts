@@ -8,22 +8,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function getEvents() {
   const { data, error } = await supabase
     .from('events')
-    .select(`
-      title,
-      date,
-      time_start,
-      time_end,
-      hood,
-      type,
-      descr,
-      link,
-      slug,
-      venue_id,
-      venues (
-        name,
-        address
-      )
-    `)
+    .select('*, venues:venue_id(name, address)')
     .order('date', { ascending: true });
 
   if (error) {
