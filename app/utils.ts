@@ -8,7 +8,22 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function getEvents() {
   const { data, error } = await supabase
     .from('events')
-    .select('*')
+    .select(`
+      title,
+      date,
+      time_start,
+      time_end,
+      hood,
+      type,
+      descr,
+      link,
+      slug,
+      venue_id,
+      venues (
+        name,
+        address
+      )
+    `)
     .order('date', { ascending: true });
 
   if (error) {
@@ -16,5 +31,13 @@ export async function getEvents() {
     return [];
   }
 
-  return data;
+  return data.map((event) => ({
+    ...event,
+    venue: event.venues?.name || '',
+    address: event.venues?.address || '',
+  }));
+}
+
+export function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
