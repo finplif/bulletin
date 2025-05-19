@@ -32,12 +32,6 @@ export async function generateStaticParams() {
   }));
 }
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
-
 export default async function Page({ params }: PageProps) {
   const [venues, events] = await Promise.all([getVenues(), getEvents()]);
   const venue = venues.find((v) => slugify(v.name) === params.slug);
