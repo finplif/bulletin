@@ -23,10 +23,9 @@ function formatDate(dateString: string): string {
 }
 
 export async function generateStaticParams() {
-  const events = await getEvents();
-  const venues = Array.from(new Set(events.map((e) => e.venue)));
+  const venues = await getVenues();
   return venues.map((venue) => ({
-    slug: slugify(venue),
+    slug: slugify(venue.name),
   }));
 }
 
@@ -36,33 +35,26 @@ type PageProps = {
   };
 };
 
-export default async function Page(props: any) {
-  const { params } = props;
-  const events = await getEvents();
-  const matching = events.filter(
-    (e) => slugify(e.venue) === params.slug
-  );
+export default async function Page({ params }: { params: { slug: string } }) {
+  const [venues, events] = await Promise.all([getVenues(), getEvents()]);
+  const venue = venues.find((v) => slugify(v.name) === params.slug);
 
-  if (matching.length === 0) return notFound();
+  if (!venue) return notFound();
 
+  const matching = events.filter((e) => e.venue?.id === venue.id);
   const now = new Date();
   const upcoming = matching.filter((e) => new Date(e.date) >= now);
   const past = matching.filter((e) => new Date(e.date) < now);
-  const venueName = matching[0].venue;
 
   return (
-    <main
-      className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}
-    >
+    <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-3xl mx-auto">
-        <Link
-          href="/venues"
-          className="text-sm underline text-gray-600 block mb-6"
-        >
+        <Link href="/venues" className="text-sm underline text-gray-600 block mb-6">
           ← all venues
         </Link>
 
-        <h1 className="text-3xl font-bold mb-6 tracking-tight">{venueName}</h1>
+        <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
+        {venue.address && <p className="text-sm text-gray-600 mb-6">{venue.address}, {venue.hood}</p>}
 
         {upcoming.length > 0 && (
           <section className="mb-10">
@@ -76,12 +68,8 @@ export default async function Page(props: any) {
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
                     {event.title}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    {formatDate(event.date)}
-                  </p>
-                  <p className="text-sm text-gray-500 italic">
-                    🎨 {event.type}
-                  </p>
+                  <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
+                  <p className="text-sm text-gray-500 italic">🎨 {event.type}</p>
                   <p className="text-sm text-gray-700 mt-1">{event.descr}</p>
                   {event.link && (
                     <a
