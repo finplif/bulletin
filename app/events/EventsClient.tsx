@@ -12,13 +12,16 @@ interface EventItem {
   date: string;
   time_start: string;
   time_end: string;
-  hood: string;
-  venue: string;
-  address?: string;
   type: string;
   descr: string;
   link: string;
   slug?: string;
+  venue?: {
+    id: number;
+    name: string;
+    address: string;
+    hood: string;
+  };
 }
 
 function slugify(text: string): string {
@@ -181,8 +184,13 @@ const futureEvents = allEvents.filter((e) => {
                     {event.title}
                   </Link>
                   <div className="text-sm text-gray-600 mb-0.5">
-                    📍 {event.venue}, {event.hood}
+                    📍 {event.venue.name}, {event.venue.hood}
                   </div>
+                  {event.venue?.address && (
+                    <div className="text-sm text-gray-600 mb-0.5">
+                      🗺️ {event.venue.address}
+                    </div>
+                  )}
                   <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
                   {event.link && (
