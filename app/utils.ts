@@ -8,25 +8,44 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function getEvents() {
   const { data, error } = await supabase
     .from('events')
-    .select(`*, venue:venue_id (
+    .select(`
       id,
-      name,
-      address,
-      hood
+      title,
+      date,
+      time_start,
+      time_end,
+      hood,
+      type,
+      descr,
+      link,
+      slug,
+      venue_id,
+      venues (
+        id,
+        name,
+        address,
+        hood
       )
     `)
     .order('date', { ascending: true });
 
-  if (error) {
-    console.error('Error fetching events:', error);
-    return [];
-  }
+  if (error) throw error;
+  return data;
+}
 
-  return data.map((event) => ({
-    ...event,
-    venue: event.venues?.name || '',
-    address: event.venues?.address || '',
-  }));
+export async function getVenues() {
+  const { data, error } = await supabase
+    .from('venues')
+    .select(`
+      id,
+      name,
+      address,
+      hood
+    `)
+    .order('name', { ascending: true });
+
+  if (error) throw error;
+  return data;
 }
 
 export function slugify(text: string): string {
