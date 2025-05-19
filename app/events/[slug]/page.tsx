@@ -9,18 +9,8 @@ import { getEvents } from '../../utils';
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 export const dynamic = 'force-dynamic';
 
-interface EventItem {
-  title: string;
-  date: string;
-  time_start: string;
-  time_end: string;
-  hood: string;
-  venue: string;
-  address?: string;
-  type: string;
-  descr: string;
-  link: string;
-  slug?: string;
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
 function formatDate(dateString: string): string {
@@ -33,17 +23,13 @@ function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', options);
 }
 
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-}
-
 export async function generateStaticParams() {
   const events = await getEvents();
   return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
 }
 
 const Page = async ({ params }: PageProps) => {
-  const events: EventItem[] = await getEvents();
+   const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
   if (!event) return notFound();
@@ -60,19 +46,17 @@ const Page = async ({ params }: PageProps) => {
 
         <div className="space-y-2 text-sm">
           <p>🕒 {event.time_start} – {event.time_end}</p>
-        
           <p>
-            📍 <Link href={`/venues/${slugify(event.venue.name)}`}>
-                  {event.venue.name}
-                </Link>
+            📍 <Link
+              href={`/venues/${slugify(event.venue?.name || '')}`}
+              className="underline hover:text-black"
+            >
+              {event.venue?.name}
+            </Link>
           </p>
-        
-          {event.address && (
-            <p className="text-sm text-gray-600">
-              {event.address}, {event.hood}
-            </p>
+          {event.venue?.address && (
+            <p className="text-sm text-gray-600">🗺️ {event.venue.address}, {event.venue.hood}</p>
           )}
-        
           <p>🎨 {event.type}</p>
         </div>
 
