@@ -10,23 +10,25 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
-
-export default async function VenueDirectory() {
+export default async function Page() {
   const venues = await getVenues();
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 tracking-tight">Venues</h1>
-        <ul className="space-y-3">
-          {venues.map((venue) => (
-            <li key={venue.id}>
+        <ul className="space-y-4">
+          {venues.map((venue, index) => (
+            <li key={index}>
               <Link
-                href={`/venues/${slugify(venue.name)}`}
-                className="text-lg underline text-[#1F1F1F] hover:text-black"
+                href={`/venues/${venue.slug}`}
+                className="text-lg underline hover:text-black"
               >
                 {venue.name}
               </Link>
+              {venue.address && (
+                <p className="text-sm text-gray-600">{venue.address}, {venue.hood}</p>
+              )}
             </li>
           ))}
         </ul>
