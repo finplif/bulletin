@@ -43,7 +43,7 @@ const { data, error } = await supabase
     console.error('Error fetching events:', error);
     return [];
   }
-
+  console.log("🧪 Raw venue from Supabase:", event.venue);
   return data.map((event: any) => ({
     id: event.id,
     title: event.title,
@@ -54,7 +54,9 @@ const { data, error } = await supabase
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venue || { name: '', address: '', hood: '', slug: '' }
+    venue: event.venue && event.venue.name
+      ? event.venue
+      : { name: '', address: '', hood: '', slug: '' }
   }));
 }
 
