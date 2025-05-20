@@ -2,6 +2,7 @@
 import type { PageProps } from './$types';
 
 import { getEvents } from '../../utils';
+import { getVenues } from '../../utils';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 import Link from 'next/link';
