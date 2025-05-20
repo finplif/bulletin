@@ -7,10 +7,7 @@ export const dynamic = 'force-dynamic';
 export default async function EventsPage() {
   const allEvents = await getEvents();
 
-  return (
-    <>
-      <Header />
-      <EventsClient allEvents={allEvents} />
-    </>
-  );
+export default async function Page() {
+  const allEvents = await getEvents();
+  return <EventsClient allEvents={allEvents} />;
 }
