@@ -8,7 +8,7 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
-export async function getEvents() {
+export async function getEvents(): Promise<EventItem[]> {
   const { data, error } = await supabase
     .from('events')
     .select(`
@@ -21,8 +21,13 @@ export async function getEvents() {
       descr,
       link,
       slug,
-      venue:venues!events_venue_id_fkey (name, address, hood)
-    `);
+      venues (
+        name,
+        address,
+        hood
+      )
+    `)
+    .returns<any[]>(); // let TS accept dynamic result
 
   if (error) {
     console.error('Error fetching events:', error);
@@ -39,7 +44,7 @@ export async function getEvents() {
     descr: event.descr,
     link: event.link,
     slug: event.slug || slugify(event.title),
-    venue: event.venue || { name: '', address: '', hood: '' },
+    venue: event.venues || { name: '', address: '', hood: '' },
   }));
 }
 
