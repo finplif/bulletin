@@ -8,21 +8,23 @@ import { getEvents } from '../utils';
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 interface EventItem {
+  id: string;
   title: string;
   date: string;
   time_start: string;
   time_end: string;
   type: string;
   descr: string;
-  link: string;
+  link?: string;
   slug?: string;
-  venue?: {
+  venues?: {
     id: number;
     name: string;
-    address?: string;
-    hood?: string;
-  };
+    address: string;
+    hood: string;
+  }[];
 }
+
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -63,7 +65,10 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [startDate, setStartDate] = useState<string>('');
 
 
-  const hoods = Array.from(new Set(allEvents.map((e) => e.venue?.hood).filter((h): h is string => !!h))).sort();
+
+  const hoods = Array.from(
+    new Set(allEvents.map((e) => e.venues?.[0]?.hood).filter(Boolean))
+  ).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
