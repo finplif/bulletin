@@ -59,11 +59,11 @@ export async function getVenues() {
     return [];
   }
 
-  return data.map((venue) => ({
+  return data.map(v => ({
     id: venue.id,
     name: venue.name,
     address: venue.address,
     hood: venue.hood,
-    slug: slugify(venue.name),
+    slug: slugify(v.name || '')
   }));
 }
