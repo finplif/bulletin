@@ -29,23 +29,18 @@ export async function getEvents() {
     return [];
   }
 
-  return data.map((event: any) => ({
-    id: event.id,
-    title: event.title,
-    date: event.date,
-    time_start: event.time_start,
-    time_end: event.time_end,
-    type: event.type,
-    descr: event.descr,
-    link: event.link,
-    slug: event.slug,
-    venue: event.venues ? {
-      name: event.venues.name,
-      address: event.venues.address,
-      hood: event.venues.hood,
-    } : { name: '', address: '', hood: '' },
-  }));
-}
+return data.map((event: any) => ({
+  id: event.id,
+  title: event.title,
+  date: event.date,
+  time_start: event.time_start,
+  time_end: event.time_end,
+  type: event.type,
+  descr: event.descr,
+  link: event.link,
+  slug: event.slug,
+  venue: event.venue || { name: '', address: '', hood: '' }, 
+}));
 
 export async function getVenues() {
   const { data, error } = await supabase
