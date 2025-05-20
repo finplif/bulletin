@@ -41,6 +41,7 @@ return data.map((event: any) => ({
   slug: event.slug,
   venue: event.venue || { name: '', address: '', hood: '' }, 
 }));
+}
 
 export async function getVenues() {
   const { data, error } = await supabase
