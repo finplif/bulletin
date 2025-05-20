@@ -46,26 +46,24 @@ function getWeekday(dateString: string): string {
 }
 
 function getTimeBucket(time: string): string {
-  const [hour, minute] = time.split(':').map(Number);
-  const totalMinutes = hour * 60 + minute;
-  if (totalMinutes < 600) return 'Morning';
-  if (totalMinutes < 840) return 'Midday';
-  if (totalMinutes < 1080) return 'Afternoon';
-  return 'Evening';
+  const parsed = new Date(`1970-01-01T${time}`);
+  const hour = parsed.getHours();
+  const minutes = parsed.getMinutes();
+  const total = hour * 60 + minutes;
+
+  if (total < 600) return 'Morning';       // before 10:00 AM
+  if (total < 840) return 'Midday';        // 10:00–1:59 PM
+  if (total < 1080) return 'Afternoon';    // 2:00–5:59 PM
+  return 'Evening';                        // 6:00 PM+
 }
 
 export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
-  
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
-
-  useEffect(() => {
-    console.log('🎯 allEvents:', allEvents);
-  }, [allEvents]);
 
   const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
   const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
@@ -82,17 +80,26 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     setSelectedTypes([]);
     setSelectedWeekdays([]);
     setSelectedTimes([]);
+    setStartDate('');
   };
 
   const now = new Date();
-  const futureEvents = allEvents.filter(e => new Date(`${e.date}T23:59:59`) >= now);
+  const futureEvents = allEvents
+    .filter(e => new Date(`${e.date}T23:59:59`) >= now)
+    .sort((a, b) => {
+      const aDate = new Date(`${a.date}T${a.time_start}`);
+      const bDate = new Date(`${b.date}T${b.time_start}`);
+      return aDate.getTime() - bDate.getTime();
+    });
 
   const filteredEvents = futureEvents.filter(e => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
-    return hoodMatch && typeMatch && weekdayMatch && timeMatch;
+    const dateMatch = !startDate || new Date(e.date) >= new Date(startDate);
+
+    return hoodMatch && typeMatch && weekdayMatch && timeMatch && dateMatch;
   });
 
   const groupedByDate = filteredEvents.reduce((acc, event) => {
@@ -139,11 +146,9 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
           <span className="text-sm font-medium">Filter by:</span>
           {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
-          {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
+          {renderDropdown('day', weekdays, setSelectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700">
-            date:
-          </label>
+          <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
           <input
             id="start-date"
             type="date"
@@ -151,7 +156,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
             onChange={(e) => setStartDate(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
           />
-          {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
+          {(selectedHoods.length > 0 || selectedTypes.length > 0 || selectedWeekdays.length > 0 || selectedTimes.length > 0 || startDate) && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
