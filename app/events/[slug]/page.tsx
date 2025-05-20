@@ -25,16 +25,14 @@ function formatDate(dateString: string): string {
 
 export async function generateStaticParams() {
   const events = await getEvents();
-  return events.map((e) => ({ slug: e.slug || slugify(e.title) }));
+  return events.map(e => ({ slug: e.slug }));
 }
 
 const Page = async ({ params }: PageProps) => {
   const events = await getEvents();
-  const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
+  const event = events.find(e => e.slug === params.slug);
 
   if (!event) return notFound();
-
-  const venue = event.venues?.[0];
 
     return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
@@ -44,25 +42,12 @@ const Page = async ({ params }: PageProps) => {
         </Link>
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{event.title}</h1>
-        <p className="text-sm text-gray-600 mb-6">{formatDate(event.date)}</p>
+        <p className="text-sm text-gray-600 mb-6">{event.date}</p>
 
         <div className="space-y-2 text-sm">
           <p>🕒 {event.time_start} – {event.time_end}</p>
-
-          {venue && (
-            <>
-              <p>
-                📍 <Link
-                  href={`/venues/${slugify(venue.name)}`}
-                  className="underline hover:text-black"
-                >
-                  {venue.name}
-                </Link>
-              </p>
-              <p className="text-gray-600">📍 {venue.address}, {venue.hood}</p>
-            </>
-          )}
-
+          <p>📍 <Link href={`/venues/${event.venue}`} className="underline hover:text-black">{event.venue}</Link></p>
+          <p className="text-sm text-gray-600">{event.address}, {event.hood}</p>
           <p>🎨 {event.type}</p>
         </div>
 
@@ -81,6 +66,4 @@ const Page = async ({ params }: PageProps) => {
       </div>
     </main>
   );
-};
-
-export default Page;
+}
