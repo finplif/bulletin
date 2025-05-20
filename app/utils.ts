@@ -31,11 +31,11 @@ const { data, error } = await supabase
     link,
     slug,
     venue_id,
-    venue:venues (
-      name,
-      address,
-      hood,
-      slug
+    venue (
+    name,
+    address,
+    hood,
+    slug
     )
   `);
 
