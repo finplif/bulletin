@@ -60,6 +60,14 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
 
+  const clearFilters = () => {
+  setSelectedHoods([]);
+  setSelectedTypes([]);
+  setSelectedWeekdays([]);
+  setSelectedTimes([]);
+  setStartDate('');
+  };
+
   const hoods = Array.from(new Set(allEvents.map(e => e.hood ?? ''))).sort();
   const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
 
