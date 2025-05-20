@@ -168,7 +168,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                     🕒 {event.time_start} – {event.time_end}
                   </div>
                   <Link
-                    href={`/events/${event.slug}`}`}
+                    href={`/events/${event.slug}`}
                     className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                   >
                     {event.title}
