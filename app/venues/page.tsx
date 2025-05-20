@@ -21,7 +21,7 @@ export default async function Page() {
           {venues.map((venue, index) => (
             <li key={index}>
               <Link
-                href={`/venues/${venue.slug}`}
+                href={`/venues/${slugify(venue.name)}`}
                 className="text-lg underline hover:text-black"
               >
                 {venue.name}
