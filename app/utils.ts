@@ -8,29 +8,52 @@ export async function getEvents() {
   const { data, error } = await supabase
     .from('events')
     .select(`
-      id, title, date, time_start, time_end, type, descr, link, slug,
-      venue:venues (
-        name, address, hood
+      id,
+      title,
+      date,
+      time_start,
+      time_end,
+      type,
+      descr,
+      link,
+      slug,
+      venues (
+        name,
+        address,
+        hood
       )
-    `)
-    .order('date', { ascending: true });
+    `);
 
   if (error) {
-    console.error('Error loading events:', error);
+    console.error('Error fetching events:', error.message);
     return [];
   }
 
-  return data;
+  return data.map((event: any) => ({
+    id: event.id,
+    title: event.title,
+    date: event.date,
+    time_start: event.time_start,
+    time_end: event.time_end,
+    type: event.type,
+    descr: event.descr,
+    link: event.link,
+    slug: event.slug,
+    venue: event.venues ? {
+      name: event.venues.name,
+      address: event.venues.address,
+      hood: event.venues.hood,
+    } : { name: '', address: '', hood: '' },
+  }));
 }
 
 export async function getVenues() {
   const { data, error } = await supabase
-    .from("venues")
-    .select("*")
-    .order("name");
+    .from('venues')
+    .select('id, name, address, hood');
 
   if (error) {
-    console.error("Error fetching venues:", error);
+    console.error('Error fetching venues:', error.message);
     return [];
   }
 
