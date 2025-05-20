@@ -31,13 +31,13 @@ const { data, error } = await supabase
   link,
   slug,
   venue_id,
-  venue:venues (
+  venues (
     name,
     address,
     hood,
     slug
   )
-`);
+`)
 
   if (error) {
     console.error('Error fetching events:', error);
