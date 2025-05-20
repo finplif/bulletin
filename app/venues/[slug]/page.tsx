@@ -40,7 +40,7 @@ export default async function Page({ params }: PageProps) {
   const past = matching.filter(e => new Date(e.date) < now);
 
   return (
-    <main className="min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F]">
+    <main className="min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F]">
       <div className="max-w-2xl mx-auto">
         <Link href="/venues" className="text-sm underline text-gray-600 block mb-6">
           ← all venues
