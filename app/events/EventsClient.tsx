@@ -85,7 +85,8 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
 
   const now = new Date();
   const futureEvents = allEvents
-    .filter(e => new Date(`${e.date}T23:59:59`) >= now)
+  .filter(e => new Date(`${e.date}T23:59:59`) >= now)
+  .filter(e => !startDate || new Date(e.date).toISOString().split('T')[0] === startDate);
     .sort((a, b) => {
       const aDate = new Date(`${a.date}T${a.time_start}`);
       const bDate = new Date(`${b.date}T${b.time_start}`);
@@ -107,13 +108,19 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     const dateB = new Date(`${b.date}T${b.time_start}`);
     return dateA.getTime() - dateB.getTime();
   });
-  
-  const groupedByDate = sortedEvents.reduce((acc, event) => {
-    const dateKey = formatDate(event.date);
-    if (!acc[dateKey]) acc[dateKey] = [];
-    acc[dateKey].push(event);
+
+  const grouped = sortedEvents.reduce((acc, event) => {
+    if (!acc[event.date]) acc[event.date] = [];
+    acc[event.date].push(event);
     return acc;
   }, {} as Record<string, EventItem[]>);
+  
+  const groupedByDate = Object.entries(grouped)
+    .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
+    .reduce((acc, [dateKey, events]) => {
+      acc[dateKey] = events;
+      return acc;
+    }, {} as Record<string, EventItem[]>);
 
   const renderDropdown = (label: string, options: string[], selected: string[], setSelected: (v: string[]) => void) => (
     <div className="relative">
@@ -176,7 +183,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
       <div className="space-y-12">
         {Object.entries(groupedByDate).map(([date, group]) => (
           <section key={date}>
-            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
+            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{formatDate(date)}</h2>
             <ul className="divide-y divide-gray-300/30">
               {group.map((event, index) => (
                 <li key={index} className="py-5">
