@@ -33,7 +33,7 @@ export async function getEvents() {
     return [];
   }
 
-  return data.map((event) => ({
+  return data.map(event => ({
     id: event.id,
     title: event.title,
     date: event.date,
@@ -43,7 +43,7 @@ export async function getEvents() {
     descr: event.descr,
     link: event.link,
     slug: event.slug || slugify(event.title),
-    venue: event.venue || { name: '', address: '', hood: '' },
+    venue: event.venues || { name: '', address: '', hood: '' },
   }));
 }
 
