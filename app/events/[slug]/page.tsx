@@ -36,7 +36,7 @@ const Page = async ({ params }: PageProps) => {
 
   if (!event) return notFound();
 
-  const venue = event.venue;
+  const venue = event.venue?.[0];
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
@@ -55,14 +55,14 @@ const Page = async ({ params }: PageProps) => {
             <>
               <p>
                 📍 <Link
-                  href={`/venues/${slugify(event.venue.name)}`}
+                  href={`/venues/${slugify(venue.name)}`}
                   className="underline hover:text-black"
                 >
-                  {event.venue.name}
+                  {venue.name}
                 </Link>
               </p>
               <p className="text-sm text-gray-600">
-                {event.venue.address}, {event.venue.hood}
+                {venue.address}, {venue.hood}
               </p>
             </>
           )}
