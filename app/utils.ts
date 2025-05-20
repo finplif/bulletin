@@ -43,7 +43,7 @@ export async function getEvents() {
     descr: event.descr,
     link: event.link,
     slug: event.slug || slugify(event.title),
-    venue: event.venues || { name: '', address: '', hood: '' },
+    venue: Array.isArray(event.venues) ? event.venues[0] : event.venues || { name: '', address: '', hood: '' }
   }));
 }
 
