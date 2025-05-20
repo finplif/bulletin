@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${dmSans.className} bg-[#F9F6F8] text-[#1F1F1F]`}>
+      <body className={`${DM_Sans.className} bg-[#F9F6F8] text-[#1F1F1F]`}>
         <Header />
         <main className="px-6 py-10">{children}</main>
       </body>
