@@ -77,13 +77,14 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
 
-  const clearFilters = () => {
-    setSelectedHoods([]);
-    setSelectedTypes([]);
-    setSelectedWeekdays([]);
-    setSelectedTimes([]);
-    setStartDate('');
-  };
+  const filteredEvents = futureEvents.filter((e) => {
+    const hood = e.venues?.[0]?.hood;
+    const hoodMatch = selectedHoods.length === 0 || (hood && selectedHoods.includes(hood));
+    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
+    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
+    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
+    return hoodMatch && typeMatch && weekdayMatch && timeMatch;
+  });
 
   const now = new Date();
   const futureEvents = allEvents.filter((e) => new Date(`${e.date}T23:59:59`) >= now);
@@ -142,7 +143,9 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
+          <label htmlFor="start-date" className="text-sm text-gray-700">
+            date:
+          </label>
           <input
             id="start-date"
             type="date"
@@ -150,7 +153,6 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
             onChange={(e) => setStartDate(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
           />
-
           {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length) > 0 && (
             <button
               onClick={clearFilters}
@@ -167,34 +169,39 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
           <section key={date}>
             <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
             <ul className="divide-y divide-gray-300/30">
-              {group.map((event, index) => (
-                <li key={index} className="py-5">
-                  <div className="text-sm text-gray-500 mb-1">
-                    🕒 {event.time_start} – {event.time_end}
-                  </div>
-                  <Link
-                    href={`/events/${event.slug || slugify(event.title)}`}
-                    className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
-                  >
-                    {event.title}
-                  </Link>
-                  <div className="text-sm text-gray-600 mb-0.5">
-                    📍 {event.venue?.name}, {event.venue?.hood}
-                  </div>
-                  <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
-                  <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
-                  {event.link && (
-                    <a
-                      href={event.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#4B6E47] underline text-sm"
+              {group.map((event, index) => {
+                const venue = event.venues?.[0];
+                return (
+                  <li key={index} className="py-5">
+                    <div className="text-sm text-gray-500 mb-1">
+                      🕒 {event.time_start} – {event.time_end}
+                    </div>
+                    <Link
+                      href={`/events/${event.slug || slugify(event.title)}`}
+                      className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                     >
-                      More info ↗
-                    </a>
-                  )}
-                </li>
-              ))}
+                      {event.title}
+                    </Link>
+                    {venue && (
+                      <div className="text-sm text-gray-600 mb-0.5">
+                        📍 {venue.name}, {venue.hood}
+                      </div>
+                    )}
+                    <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
+                    <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
+                    {event.link && (
+                      <a
+                        href={event.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#4B6E47] underline text-sm"
+                      >
+                        More info ↗
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </section>
         ))}
