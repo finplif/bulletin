@@ -7,7 +7,7 @@ import { getEvents } from '../utils';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
-interface EventItem {
+export interface EventItem {
   id: number;
   title: string;
   date: string;
