@@ -1,4 +1,3 @@
-import Header from '../components/Header';
 import EventsClient from './EventsClient';
 import { getEvents } from '../utils';
 
@@ -9,7 +8,6 @@ export default async function Page() {
 
   return (
     <>
-      <Header />
       <EventsClient allEvents={allEvents} />
     </>
   );
