@@ -21,23 +21,23 @@ export async function getEvents() {
 const { data, error } = await supabase
   .from('events')
   .select(`
-  id,
-  title,
-  date,
-  time_start,
-  time_end,
-  type,
-  descr,
-  link,
-  slug,
-  venue_id,
-  venues (
-    name,
-    address,
-    hood,
-    slug
-  )
-`)
+    id,
+    title,
+    date,
+    time_start,
+    time_end,
+    type,
+    descr,
+    link,
+    slug,
+    venue_id,
+    venue:venues!venue_id (
+      name,
+      address,
+      hood,
+      slug
+    )
+  `)
 
   if (error) {
     console.error('Error fetching events:', error);
@@ -60,9 +60,9 @@ const { data, error } = await supabase
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venues && event.venues.name
-      ? event.venues
-      : { name: '', address: '', hood: '', slug: '' }
+    venue: event.venue && event.venue.name
+  ? event.venue
+  : { name: '', address: '', hood: '', slug: '' }
   }));
 }
 
