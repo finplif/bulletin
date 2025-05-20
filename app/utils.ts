@@ -31,7 +31,7 @@ const { data, error } = await supabase
     link,
     slug,
     venue_id,
-    venues!venue (
+    venue (
       name,
       address,
       hood,
@@ -46,7 +46,7 @@ const { data, error } = await supabase
   
   if (data) {
     data.forEach((event: any) => {
-      console.log("🧪 Raw event data from Supabase:", event.venues);
+      console.log("📦 Supabase event payload:", JSON.stringify(data, null, 2));
     });
   }
   
@@ -60,8 +60,8 @@ const { data, error } = await supabase
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venues && event.venues.name
-  ? event.venues
+    venue: event.venue && event.venue.name
+  ? event.venue
   : { name: '', address: '', hood: '', slug: '' }
   }));
 }
