@@ -193,5 +193,3 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     </main>
   );
 }
-
-export default EventsClient;
