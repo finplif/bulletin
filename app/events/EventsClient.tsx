@@ -44,8 +44,20 @@ function getWeekday(dateString: string): string {
   return date.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
+function parseTimeTo24Hour(time: string): string {
+  if (!time.includes('AM') && !time.includes('PM')) return time; // already 24h format
+
+  const [raw, modifier] = time.split(' ');
+  let [hours, minutes] = raw.split(':').map(Number);
+
+  if (modifier === 'PM' && hours < 12) hours += 12;
+  if (modifier === 'AM' && hours === 12) hours = 0;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
 function getTimeBucket(time: string): string {
-  const [hour, minute] = time.split(':').map(Number);
+  const [hour, minute] = parseTimeTo24Hour(time).split(':').map(Number);
   const totalMinutes = hour * 60 + minute;
   if (totalMinutes < 600) return 'Morning';
   if (totalMinutes < 840) return 'Midday';
@@ -81,41 +93,25 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   const now = new Date();
   const futureEvents = allEvents
     .filter(e => new Date(`${e.date}T23:59:59`) >= now)
-    .filter(e => !startDate || new Date(e.date).toISOString().split('T')[0] === startDate);
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const filteredEvents = futureEvents.filter(e => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
-    return hoodMatch && typeMatch && weekdayMatch && timeMatch;
+    const dateMatch = !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
+    return hoodMatch && typeMatch && weekdayMatch && timeMatch && dateMatch;
   });
 
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    const aTime = new Date(`${a.date}T${a.time_start}`);
-    const bTime = new Date(`${b.date}T${b.time_start}`);
-    return aTime.getTime() - bTime.getTime();
-  });
-
-  const groupedRaw = sortedEvents.reduce((acc, event) => {
-    if (!acc[event.date]) acc[event.date] = [];
-    acc[event.date].push(event);
+  const groupedByDate = filteredEvents.reduce((acc, event) => {
+    const dateKey = formatDate(event.date);
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(event);
     return acc;
   }, {} as Record<string, EventItem[]>);
 
-  const groupedByDate = Object.entries(groupedRaw)
-    .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
-    .reduce((acc, [date, events]) => {
-      acc[date] = events;
-      return acc;
-    }, {} as Record<string, EventItem[]>);
-
-  const renderDropdown = (
-    label: string,
-    options: string[],
-    selected: string[],
-    setSelected: (v: string[]) => void
-  ) => (
+  const renderDropdown = (label: string, options: string[], selected: string[], setSelected: (v: string[]) => void) => (
     <div className="relative">
       <button
         className={`px-3 py-1.5 rounded-full text-sm border transition ${
@@ -154,9 +150,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
-          <label htmlFor="start-date" className="text-sm text-gray-700">
-            date:
-          </label>
+          <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
           <input
             id="start-date"
             type="date"
@@ -164,11 +158,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
             onChange={(e) => setStartDate(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
           />
-          {(selectedHoods.length > 0 ||
-            selectedTypes.length > 0 ||
-            selectedWeekdays.length > 0 ||
-            selectedTimes.length > 0 ||
-            !!startDate) && (
+          {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length || startDate) > 0 && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
@@ -182,9 +172,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
       <div className="space-y-12">
         {Object.entries(groupedByDate).map(([date, group]) => (
           <section key={date}>
-            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">
-              {formatDate(date)}
-            </h2>
+            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
             <ul className="divide-y divide-gray-300/30">
               {group.map((event, index) => (
                 <li key={index} className="py-5">
