@@ -168,7 +168,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                     🕒 {event.time_start} – {event.time_end}
                   </div>
                   <Link
-                    href={`/events/${event.slug || slugify(event.title)}`}
+                    href={`/events/${event.slug}`}`}
                     className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                   >
                     {event.title}
@@ -187,7 +187,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                       rel="noopener noreferrer"
                       className="text-[#4B6E47] underline text-sm"
                     >
-                      More info ↗
+                      more info ↗
                     </a>
                   )}
                 </li>
