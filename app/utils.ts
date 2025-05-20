@@ -18,25 +18,26 @@ function slugify(text: string): string {
 }
 
 export async function getEvents() {
-  const { data, error } = await supabase
-    .from('events')
-    .select(`
-      id,
-      title,
-      date,
-      time_start,
-      time_end,
-      type,
-      descr,
-      link,
-      slug,
-      venue_id,
-      venue:venues (
-        name,
-        address,
-        hood
-      )
-    `);
+const { data, error } = await supabase
+  .from('events')
+  .select(`
+    id,
+    title,
+    date,
+    time_start,
+    time_end,
+    type,
+    descr,
+    link,
+    slug,
+    venue_id,
+    venue: venues (
+      name,
+      address,
+      hood,
+      slug
+    )
+  `);
 
   if (error) {
     console.error('Error fetching events:', error);
@@ -53,7 +54,7 @@ export async function getEvents() {
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venue || { name: '', address: '', hood: '' }
+    venue: event.venue || { name: '', address: '', hood: '', slug: '' } 
   }));
 }
 
