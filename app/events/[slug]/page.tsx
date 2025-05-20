@@ -55,7 +55,7 @@ const Page = async ({ params }: PageProps) => {
             <>
               <p>
                 📍 <Link
-                  href={`/venues/${slugify(venue.name)}`}
+                  href={`/venues/${venue.slug}
                   className="underline hover:text-black"
                 >
                   {venue.name}
