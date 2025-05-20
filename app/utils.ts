@@ -49,15 +49,21 @@ export async function getEvents() {
   }));
 }
 
-export async function getVenues() {
+export async function getVenues(): Promise<VenueItem[]> {
   const { data, error } = await supabase
     .from('venues')
-    .select('id, name, address, hood');
+    .select('id, name, address, hood, slug');
 
   if (error) {
     console.error('Error fetching venues:', error);
     return [];
   }
 
-  return data;
+  return data.map(v => ({
+    id: v.id,
+    name: v.name,
+    address: v.address,
+    hood: v.hood,
+    slug: v.slug,
+  }));
 }
