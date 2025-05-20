@@ -39,7 +39,7 @@ const Page = async ({ params }: PageProps) => {
   const venue = Array.isArray(event.venue) ? event.venue[0] : event.venue;
 
   return (
-    <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
+    <main className={`min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-2xl mx-auto">
         <Link href="/events" className="text-sm underline text-gray-600 block mb-6">
           ← all events
