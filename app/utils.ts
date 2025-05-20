@@ -22,17 +22,17 @@ export async function getEvents() {
   }
 
   return data.map((event) => ({
-    id: event.id,
-    title: event.title,
-    date: event.date,
-    time_start: event.time_start,
-    time_end: event.time_end,
-    type: event.type,
-    descr: event.descr,
-    link: event.link,
-    venue: event.venue || { name: "", address: "", hood: "" },
-    slug: event.slug || slugify(event.title),
-  }));
+  id: event.id,
+  title: event.title,
+  date: event.date,
+  time_start: event.time_start,
+  time_end: event.time_end,
+  type: event.type,
+  descr: event.descr,
+  link: event.link,
+  slug: event.slug || slugify(event.title),
+  venue: event.venue || { name: '', address: '', hood: '' },
+}));
 }
 
 export async function getVenues() {
