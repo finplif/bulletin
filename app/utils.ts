@@ -31,7 +31,7 @@ export async function getEvents() {
       link,
       slug,
       venue_id,
-      venues (
+      venue:venues (
         name,
         address,
         hood
@@ -53,7 +53,7 @@ export async function getEvents() {
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venue || { name: '', address: '', hood: '' }
+    venue: event.venues || { name: '', address: '', hood: '' }
   }));
 }
 
