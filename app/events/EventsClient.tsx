@@ -102,7 +102,13 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     return hoodMatch && typeMatch && weekdayMatch && timeMatch && dateMatch;
   });
 
-  const groupedByDate = filteredEvents.reduce((acc, event) => {
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    const dateA = new Date(`${a.date}T${a.time_start}`);
+    const dateB = new Date(`${b.date}T${b.time_start}`);
+    return dateA.getTime() - dateB.getTime();
+  });
+  
+  const groupedByDate = sortedEvents.reduce((acc, event) => {
     const dateKey = formatDate(event.date);
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(event);
