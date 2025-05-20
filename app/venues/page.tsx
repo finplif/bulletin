@@ -13,7 +13,7 @@ export default async function Page() {
   const venues = await getVenues();
 
   return (
-    <main className="min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F]">
+    <main className="min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F]">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 tracking-tight">Venues</h1>
         <ul className="space-y-4">
