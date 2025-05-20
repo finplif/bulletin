@@ -29,10 +29,12 @@ export async function generateStaticParams() {
 }
 
 const Page = async ({ params }: PageProps) => {
-   const events = await getEvents();
+  const events = await getEvents();
   const event = events.find((e) => (e.slug || slugify(e.title)) === params.slug);
 
   if (!event) return notFound();
+
+  const venue = event.venues?.[0];
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
