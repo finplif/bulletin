@@ -34,7 +34,7 @@ const Page = async ({ params }: PageProps) => {
 
   if (!event) return notFound();
 
-  const venue = event.venue?.[0];
+  const venue = event.venue;
 
   return (
     <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
