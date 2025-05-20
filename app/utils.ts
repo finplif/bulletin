@@ -31,7 +31,7 @@ const { data, error } = await supabase
     link,
     slug,
     venue_id,
-    venue:venues!venue_id (
+    venues!venue (
       name,
       address,
       hood,
