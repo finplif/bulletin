@@ -1,5 +1,4 @@
 import { getVenues } from '../utils';
-import Header from '../components/Header';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
 
@@ -14,21 +13,19 @@ export default async function Page() {
   const venues = await getVenues();
 
   return (
-    <main className={`min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F] ${dmSans.className}`}>
+    <main className="min-h-screen bg-[#F9F6F8] px-6 py-10 text-[#1F1F1F]">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 tracking-tight">Venues</h1>
         <ul className="space-y-4">
           {venues.map((venue, index) => (
             <li key={index}>
               <Link
-                href={`/venues/${slugify(venue.name)}`}
+                href={`/venues/${venue.slug}`}
                 className="text-lg underline hover:text-black"
               >
                 {venue.name}
               </Link>
-              {venue.address && (
-                <p className="text-sm text-gray-600">{venue.address}, {venue.hood}</p>
-              )}
+              <p className="text-sm text-gray-600">{venue.address}, {venue.hood}</p>
             </li>
           ))}
         </ul>
