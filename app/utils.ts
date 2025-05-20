@@ -10,22 +10,18 @@ function slugify(text: string): string {
 
 export async function getEvents() {
   const { data, error } = await supabase
-    .from('events')
+    .from("events")
     .select(`
-    id, title, date, time_start, time_end, type, descr, link, slug,
-    venue (
-      name,
-      address,
-      hood
-    )
-  `);
+      id, title, date, time_start, time_end, type, descr, link, slug,
+      venue:venues (name, address, hood)
+    `);
 
   if (error) {
-    console.error('Error fetching events:', error.message);
+    console.error("Error fetching events:", error);
     return [];
   }
 
-  return data.map(event => ({
+  return data.map((event) => ({
     id: event.id,
     title: event.title,
     date: event.date,
@@ -34,8 +30,8 @@ export async function getEvents() {
     type: event.type,
     descr: event.descr,
     link: event.link,
+    venue: event.venue || { name: "", address: "", hood: "" },
     slug: event.slug || slugify(event.title),
-    venue: Array.isArray(event.venue) ? event.venue[0] : event.venue || { name: '', address: '', hood: '' }
   }));
 }
 
