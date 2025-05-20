@@ -46,7 +46,7 @@ const { data, error } = await supabase
   
   if (data) {
     data.forEach((event: any) => {
-      console.log("🧪 Raw venue from Supabase:", event.venue);
+      console.log("🧪 Raw event data from Supabase:", event);
     });
   }
   
