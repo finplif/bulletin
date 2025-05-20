@@ -10,29 +10,37 @@ function slugify(text: string): string {
 
 export async function getEvents() {
   const { data, error } = await supabase
-    .from("events")
+    .from('events')
     .select(`
-      id, title, date, time_start, time_end, type, descr, link, slug,
+      id,
+      title,
+      date,
+      time_start,
+      time_end,
+      type,
+      descr,
+      link,
+      slug,
       venue:venues!events_venue_id_fkey (name, address, hood)
-    `)
+    `);
 
   if (error) {
-    console.error("Error fetching events:", error);
+    console.error('Error fetching events:', error);
     return [];
   }
 
   return data.map((event) => ({
-  id: event.id,
-  title: event.title,
-  date: event.date,
-  time_start: event.time_start,
-  time_end: event.time_end,
-  type: event.type,
-  descr: event.descr,
-  link: event.link,
-  slug: event.slug || slugify(event.title),
-  venue: event.venue || { name: '', address: '', hood: '' },
-}));
+    id: event.id,
+    title: event.title,
+    date: event.date,
+    time_start: event.time_start,
+    time_end: event.time_end,
+    type: event.type,
+    descr: event.descr,
+    link: event.link,
+    slug: event.slug || slugify(event.title),
+    venue: event.venue || { name: '', address: '', hood: '' },
+  }));
 }
 
 export async function getVenues() {
@@ -41,9 +49,15 @@ export async function getVenues() {
     .select('id, name, address, hood');
 
   if (error) {
-    console.error('Error fetching venues:', error.message);
+    console.error('Error fetching venues:', error);
     return [];
   }
 
-  return data;
+  return data.map((venue) => ({
+    id: venue.id,
+    name: venue.name,
+    address: venue.address,
+    hood: venue.hood,
+    slug: slugify(venue.name),
+  }));
 }
