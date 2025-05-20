@@ -55,12 +55,17 @@ function getTimeBucket(time: string): string {
 }
 
 export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
+  
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
+
+  useEffect(() => {
+    console.log('🎯 allEvents:', allEvents);
+  }, [allEvents]);
 
   const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
   const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
