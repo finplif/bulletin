@@ -146,7 +146,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
           <span className="text-sm font-medium">Filter by:</span>
           {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
           {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
-          {renderDropdown('day', weekdays, setSelectedWeekdays, setSelectedWeekdays)}
+          {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
           <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
           <input
