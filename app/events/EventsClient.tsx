@@ -158,7 +158,13 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
             onChange={(e) => setStartDate(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
           />
-          {(selectedHoods.length || selectedTypes.length || selectedWeekdays.length || selectedTimes.length || startDate) > 0 && (
+         {(
+            selectedHoods.length > 0 ||
+            selectedTypes.length > 0 ||
+            selectedWeekdays.length > 0 ||
+            selectedTimes.length > 0 ||
+            startDate !== ''
+          ) && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
