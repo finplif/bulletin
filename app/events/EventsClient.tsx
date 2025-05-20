@@ -17,9 +17,11 @@ interface EventItem {
   descr: string;
   link: string;
   slug: string;
-  venue: string;
-  address: string;
-  hood: string;
+  venue: {
+    name: string;
+    address: string;
+    hood: string;
+  } | null;
 }
 
 function slugify(text: string): string {
@@ -28,7 +30,7 @@ function slugify(text: string): string {
 
 function formatDate(dateString: string): string {
   const [year, month, day] = dateString.split('-').map(Number);
-  const date = new Date(year, month - 1, day); // JS months are 0-based
+  const date = new Date(year, month - 1, day);
   return date.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -39,7 +41,7 @@ function formatDate(dateString: string): string {
 
 function getWeekday(dateString: string): string {
   const [year, month, day] = dateString.split('-').map(Number);
-  const date = new Date(year, month - 1, day); // local date
+  const date = new Date(year, month - 1, day);
   return date.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
@@ -60,15 +62,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
 
-  const clearFilters = () => {
-  setSelectedHoods([]);
-  setSelectedTypes([]);
-  setSelectedWeekdays([]);
-  setSelectedTimes([]);
-  setStartDate('');
-  };
-
-  const hoods = Array.from(new Set(allEvents.map(e => e.hood ?? ''))).sort();
+  const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
   const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
 
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -78,11 +72,18 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
 
+  const clearFilters = () => {
+    setSelectedHoods([]);
+    setSelectedTypes([]);
+    setSelectedWeekdays([]);
+    setSelectedTimes([]);
+  };
+
   const now = new Date();
   const futureEvents = allEvents.filter(e => new Date(`${e.date}T23:59:59`) >= now);
 
   const filteredEvents = futureEvents.filter(e => {
-    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood ?? '');
+    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
@@ -161,39 +162,36 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
           <section key={date}>
             <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
             <ul className="divide-y divide-gray-300/30">
-              {group.map((event, index) => {
-                const venue = event.venues?.[0];
-                return (
-                  <li key={index} className="py-5">
-                    <div className="text-sm text-gray-500 mb-1">
-                      🕒 {event.time_start} – {event.time_end}
+              {group.map((event, index) => (
+                <li key={index} className="py-5">
+                  <div className="text-sm text-gray-500 mb-1">
+                    🕒 {event.time_start} – {event.time_end}
+                  </div>
+                  <Link
+                    href={`/events/${event.slug || slugify(event.title)}`}
+                    className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
+                  >
+                    {event.title}
+                  </Link>
+                  {event.venue && (
+                    <div className="text-sm text-gray-600 mb-0.5">
+                      📍 {event.venue.name}, {event.venue.hood}
                     </div>
-                    <Link
-                      href={`/events/${event.slug || slugify(event.title)}`}
-                      className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
+                  )}
+                  <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
+                  <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
+                  {event.link && (
+                    <a
+                      href={event.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#4B6E47] underline text-sm"
                     >
-                      {event.title}
-                    </Link>
-                    {venue && (
-                      <div className="text-sm text-gray-600 mb-0.5">
-                        📍 {venue.name}, {venue.hood}
-                      </div>
-                    )}
-                    <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
-                    <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
-                    {event.link && (
-                      <a
-                        href={event.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#4B6E47] underline text-sm"
-                      >
-                        More info ↗
-                      </a>
-                    )}
-                  </li>
-                );
-              })}
+                      More info ↗
+                    </a>
+                  )}
+                </li>
+              ))}
             </ul>
           </section>
         ))}
