@@ -60,10 +60,10 @@ export async function getVenues() {
   }
 
   return data.map(v => ({
-    id: venue.id,
-    name: venue.name,
-    address: venue.address,
-    hood: venue.hood,
+    id: v.id,
+    name: v.name,
+    address: v.address,
+    hood: v.hood,
     slug: slugify(v.name || '')
   }));
 }
