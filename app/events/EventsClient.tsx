@@ -8,23 +8,19 @@ import { getEvents } from '../utils';
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
 interface EventItem {
-  id: string;
+  id: number;
   title: string;
   date: string;
   time_start: string;
   time_end: string;
   type: string;
   descr: string;
-  link?: string;
-  slug?: string;
-  venues?: {
-    id: number;
-    name: string;
-    address: string;
-    hood: string;
-  }[];
+  link: string;
+  slug: string;
+  venue: string;
+  address: string;
+  hood: string;
 }
-
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
@@ -56,7 +52,7 @@ function getTimeBucket(time: string): string {
   return 'Evening';
 }
 
-function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
+export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [selectedHoods, setSelectedHoods] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
@@ -64,12 +60,9 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>('');
 
+  const hoods = Array.from(new Set(allEvents.map(e => e.hood ?? ''))).sort();
+  const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
 
-
-  const hoods = Array.from(
-    new Set(allEvents.map((e) => e.venues?.[0]?.hood).filter(Boolean))
-  ).sort();
-  const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
 
@@ -78,10 +71,10 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   };
 
   const now = new Date();
-  const futureEvents = allEvents.filter((e) => new Date(`${e.date}T23:59:59`) >= now);
+  const futureEvents = allEvents.filter(e => new Date(`${e.date}T23:59:59`) >= now);
 
-  const filteredEvents = futureEvents.filter((e) => {
-    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood || '');
+  const filteredEvents = futureEvents.filter(e => {
+    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.hood ?? '');
     const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
