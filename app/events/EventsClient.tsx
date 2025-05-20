@@ -21,7 +21,7 @@ interface EventItem {
     name: string;
     address: string;
     hood: string;
-  } | null;
+  };
 }
 
 function slugify(text: string): string {
