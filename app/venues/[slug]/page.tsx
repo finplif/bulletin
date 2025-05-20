@@ -33,7 +33,7 @@ export async function generateStaticParams() {
 
 export default async function Page({ params }: PageProps) {
   const [venues, events] = await Promise.all([getVenues(), getEvents()]);
-  const venue = venues.find(v => v.slug === params.slug);
+  const venue = venues.find(v => slugify(v.name) === params.slug);
 
   if (!venue) return notFound();
 
