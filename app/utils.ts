@@ -43,7 +43,13 @@ const { data, error } = await supabase
     console.error('Error fetching events:', error);
     return [];
   }
-  console.log("🧪 Raw venue from Supabase:", event.venue);
+  
+  if (data) {
+    data.forEach((event: any) => {
+      console.log("🧪 Raw venue from Supabase:", event.venue);
+    });
+  }
+  
   return data.map((event: any) => ({
     id: event.id,
     title: event.title,
