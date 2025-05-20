@@ -13,8 +13,8 @@ export async function getEvents() {
     .from("events")
     .select(`
       id, title, date, time_start, time_end, type, descr, link, slug,
-      venue:venues (name, address, hood)
-    `);
+      venue:venues!events_venue_id_fkey (name, address, hood)
+    `)
 
   if (error) {
     console.error("Error fetching events:", error);
