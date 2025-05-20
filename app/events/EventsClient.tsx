@@ -140,7 +140,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   );
 
   return (
-    <main className={`min-h-screen bg-[#F9F6F8] px-6 py-7 text-[#1F1F1F] ${dmSans.className}`}>
+    <main className={`min-h-screen bg-[#F9F6F8] px-6 py-4 text-[#1F1F1F] ${dmSans.className}`}>
       <h1 className="text-3xl font-bold mb-6 tracking-tight">Events</h1>
 
       <div className="space-y-4 mb-10">
