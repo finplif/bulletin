@@ -40,8 +40,8 @@ function formatDate(dateString: string): string {
 }
 
 function getWeekday(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
+  const date = new Date(`${dateString}T00:00:00Z`);
+  return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
 }
 
 function parseTimeTo24Hour(time: string): string {
