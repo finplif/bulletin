@@ -44,8 +44,6 @@ const { data, error } = await supabase
     return [];
   }
   
-  console.log("🧪 Raw venue from Supabase:", event.venue);
-  
   return data.map((event: any) => ({
     id: event.id,
     title: event.title,
