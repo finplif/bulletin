@@ -60,8 +60,8 @@ const { data, error } = await supabase
     descr: event.descr,
     link: event.link,
     slug: event.slug,
-    venue: event.venue && event.venue.name
-      ? event.venue
+    venue: event.venues && event.venues.name
+      ? event.venues
       : { name: '', address: '', hood: '', slug: '' }
   }));
 }
