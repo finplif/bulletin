@@ -77,15 +77,6 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
     setList(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
   };
 
-  const filteredEvents = futureEvents.filter((e) => {
-    const hood = e.venues?.[0]?.hood;
-    const hoodMatch = selectedHoods.length === 0 || (hood && selectedHoods.includes(hood));
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
-    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
-    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
-    return hoodMatch && typeMatch && weekdayMatch && timeMatch;
-  });
-
   const now = new Date();
   const futureEvents = allEvents.filter((e) => new Date(`${e.date}T23:59:59`) >= now);
 
