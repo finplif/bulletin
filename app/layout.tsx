@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${dmSans.className} bg-[#F9F6F8] text-[#1F1F1F]`}>
         <Header />
-        <main className="px-6 py-10">{children}</main>
+        <main className="px-6 py-3">{children}</main>
       </body>
     </html>
   );
