@@ -44,11 +44,7 @@ const { data, error } = await supabase
     return [];
   }
   
-  if (data) {
-    data.forEach((event: any) => {
-      console.log("📦 Supabase event payload:", JSON.stringify(data, null, 2));
-    });
-  }
+  console.log("🧪 Raw venue from Supabase:", event.venue);
   
   return data.map((event: any) => ({
     id: event.id,
