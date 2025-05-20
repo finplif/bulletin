@@ -28,7 +28,7 @@ function formatDate(dateString: string): string {
 
 export async function generateStaticParams() {
   const venues = await getVenues();
-  return venues.map(v => ({ slug: v.slug }));
+  return venues.map(v => ({ slug: slugify(v.name) }));
 }
 
 export default async function Page({ params }: PageProps) {
