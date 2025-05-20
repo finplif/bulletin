@@ -4,9 +4,6 @@ import { getEvents } from '../utils';
 
 export const dynamic = 'force-dynamic';
 
-export default async function EventsPage() {
-  const allEvents = await getEvents();
-
 export default async function Page() {
   const allEvents = await getEvents();
   return <EventsClient allEvents={allEvents} />;
