@@ -63,7 +63,7 @@ function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
   const [startDate, setStartDate] = useState<string>('');
 
 
-  const hoods = Array.from(new Set(allEvents.map((e) => e.venue?.hood).filter(Boolean))).sort();
+  const hoods = Array.from(new Set(allEvents.map((e) => e.venue?.hood).filter((h): h is string => !!h))).sort();
   const types = Array.from(new Set(allEvents.map((e) => e.type))).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
