@@ -63,7 +63,7 @@ const { data, error } = await supabase
 export async function getVenues(): Promise<VenueItem[]> {
   const { data, error } = await supabase
     .from('venues')
-    .select('id, name, address, hood, slug');
+    .select('id, name, address, hood, slug, working_hours');
 
   if (error) {
     console.error('Error fetching venues:', error);
@@ -76,5 +76,6 @@ export async function getVenues(): Promise<VenueItem[]> {
     address: v.address,
     hood: v.hood,
     slug: v.slug,
+    working_hours: v.working_hours || '',
   }));
 }
