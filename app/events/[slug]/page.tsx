@@ -67,7 +67,9 @@ const Page = async ({ params }: PageProps) => {
             </>
           )}
 
-          <p>🎨 {event.type}</p>
+          {event.types && event.types.length > 0 && (
+            <p>🎨 {event.types.join(', ')}</p>
+          )}
         </div>
 
         <p className="text-gray-800 text-sm mt-6 leading-relaxed whitespace-pre-wrap">{event.descr}</p>
