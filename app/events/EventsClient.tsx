@@ -57,12 +57,31 @@ function parseTimeTo24Hour(time: string): string {
 }
 
 function getTimeBucket(time: string): string {
-  const [hour, minute] = parseTimeTo24Hour(time).split(':').map(Number);
+  let hour = 0;
+  let minute = 0;
+
+  // handle AM/PM format like "7PM" or "6:30AM"
+  const ampmMatch = time.match(/^(\d{1,2})(?::(\d{2}))?(AM|PM)$/i);
+  if (ampmMatch) {
+    hour = parseInt(ampmMatch[1], 10);
+    minute = ampmMatch[2] ? parseInt(ampmMatch[2], 10) : 0;
+    const meridiem = ampmMatch[3].toUpperCase();
+
+    if (meridiem === 'PM' && hour !== 12) hour += 12;
+    if (meridiem === 'AM' && hour === 12) hour = 0;
+  } else {
+    // fallback to 24-hour format like "14:30"
+    const [h, m] = time.split(':').map(Number);
+    hour = h;
+    minute = m || 0;
+  }
+
   const totalMinutes = hour * 60 + minute;
-  if (totalMinutes < 600) return 'Morning';
-  if (totalMinutes < 840) return 'Midday';
-  if (totalMinutes < 1080) return 'Afternoon';
-  return 'Evening';
+
+  if (totalMinutes < 600) return 'Morning';     // before 10:00
+  if (totalMinutes < 840) return 'Midday';      // before 14:00
+  if (totalMinutes < 1080) return 'Afternoon';  // before 18:00
+  return 'Evening';                             // 18:00+
 }
 
 export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
