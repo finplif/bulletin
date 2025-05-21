@@ -98,11 +98,22 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const filteredEvents = futureEvents.filter(e => {
-    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.some(type => e.types.includes(type));
-    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
-    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
-    const dateMatch = !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
+    const hoodMatch =
+      selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
+  
+    const typeMatch =
+      selectedTypes.length === 0 ||
+      (Array.isArray(e.types) && selectedTypes.some(type => e.types.includes(type)));
+  
+    const weekdayMatch =
+      selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
+  
+    const timeMatch =
+      selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
+  
+    const dateMatch =
+      !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
+  
     return hoodMatch && typeMatch && weekdayMatch && timeMatch && dateMatch;
   });
 
