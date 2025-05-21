@@ -26,7 +26,7 @@ const { data, error } = await supabase
     date,
     time_start,
     time_end,
-    type,
+    type: event.type || [],
     descr,
     link,
     slug,
