@@ -74,7 +74,9 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
-  const types = Array.from(new Set(allEvents.map(e => e.type ?? ''))).sort();
+  const types = Array.from(
+    new Set(allEvents.flatMap(e => e.type ?? []))
+  ).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
 
@@ -97,7 +99,9 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
 
   const filteredEvents = futureEvents.filter(e => {
     const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
-    const typeMatch = selectedTypes.length === 0 || selectedTypes.includes(e.type);
+    const typeMatch =
+      selectedTypes.length === 0 ||
+      selectedTypes.some(type => e.type?.includes(type));
     const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
     const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
     const dateMatch = !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
@@ -196,7 +200,9 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                       📍 {event.venue.name}, {event.venue.hood}
                     </div>
                   )}
-                  <div className="text-sm text-gray-500 italic mb-1">🎨 {event.type}</div>
+                  <div className="text-sm text-gray-500 italic mb-1">
+                    🎨 {event.type?.join(', ')}
+                  </div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
                   {event.link && (
                     <a
