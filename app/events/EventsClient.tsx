@@ -151,7 +151,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
         <div className="flex items-center gap-4 flex-wrap">
           <span className="text-sm font-medium">Filter by:</span>
           {renderDropdown('area', hoods, selectedHoods, setSelectedHoods)}
-          {renderDropdown('type', types, selectedTypes, setSelectedTypes)}
+          {renderDropdown('types', types, selectedTypes, setSelectedTypes)}
           {renderDropdown('day', weekdays, selectedWeekdays, setSelectedWeekdays)}
           {renderDropdown('time', timeRanges, selectedTimes, setSelectedTimes)}
           <label htmlFor="start-date" className="text-sm text-gray-700">date:</label>
