@@ -64,7 +64,9 @@ export default async function Page({ params }: PageProps) {
                     {event.title}
                   </h3>
                   <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
-                  <p className="text-sm text-gray-500 italic">🎨 {event.type}</p>
+                  {event.types && event.types.length > 0 && (
+                    <p>🎨 {event.types.join(', ')}</p>
+                  )}
                   <p className="text-sm text-gray-700 mt-1">{event.descr}</p>
                   {event.link && (
                     <a
