@@ -75,7 +75,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
 
   const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
   const types = Array.from(
-    new Set(allEvents.flatMap(e => e.type ?? []))
+    new Set(allEvents.flatMap(e => e.types ?? []))
   ).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
