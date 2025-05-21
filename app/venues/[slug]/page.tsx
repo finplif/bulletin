@@ -47,12 +47,13 @@ export default async function Page({ params }: PageProps) {
         </Link>
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
-        {venue.address && (
           <div className="text-sm text-gray-600 mb-6">
             <p>{venue.address}</p>
             <p>{venue.hood}</p>
+            {venue.working_hours && venue.working_hours.split('\n').map((line, i) => (
+              <p key={i}>{line}</p>
+            ))}
           </div>
-        )}
 
         {upcoming.length > 0 && (
           <section className="mb-10">
