@@ -199,7 +199,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                     </div>
                   )}
                   <div className="text-sm text-gray-500 italic mb-1">
-                    🎨 {event.type?.join(', ')}
+                    🎨 {event.types?.join(', ')}
                   </div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
                   {event.link && (
