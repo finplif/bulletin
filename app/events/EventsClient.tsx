@@ -13,7 +13,7 @@ export interface EventItem {
   date: string;
   time_start: string;
   time_end: string;
-  type: string;
+  type: string[];
   descr: string;
   link: string;
   slug: string;
