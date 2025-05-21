@@ -48,7 +48,10 @@ export default async function Page({ params }: PageProps) {
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
         {venue.address && (
-          <p className="text-sm text-gray-600 mb-6">{venue.address}, {venue.hood}</p>
+          <div className="text-sm text-gray-600 mb-6">
+            <p>{venue.address}</p>
+            <p>{venue.hood}</p>
+          </div>
         )}
 
         {upcoming.length > 0 && (
