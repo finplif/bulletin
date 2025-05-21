@@ -60,12 +60,12 @@ function getTimeBucket(time: string): string {
   let hour = 0;
   let minute = 0;
 
-  // handle AM/PM format like "7PM" or "6:30AM"
-  const ampmMatch = time.match(/^(\d{1,2})(?::(\d{2}))?(AM|PM)$/i);
+  // tolerate both "7:30 PM" and "7:30PM"
+  const ampmMatch = time.trim().toUpperCase().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
   if (ampmMatch) {
     hour = parseInt(ampmMatch[1], 10);
     minute = ampmMatch[2] ? parseInt(ampmMatch[2], 10) : 0;
-    const meridiem = ampmMatch[3].toUpperCase();
+    const meridiem = ampmMatch[3];
 
     if (meridiem === 'PM' && hour !== 12) hour += 12;
     if (meridiem === 'AM' && hour === 12) hour = 0;
