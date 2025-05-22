@@ -51,27 +51,26 @@ const Page = async ({ params }: PageProps) => {
         <div className="text-sm text-gray-500 mb-1">
           🕒 {event.time_start} – {event.time_end}
         </div>
-
-          {venue && (
-            <>
-              <p>
-                📍 <Link
-                  href={`/venues/${venue.slug}`}
-                  className="underline hover:text-black"
-                >
-                  {venue.name}
-                </Link>
-              </p>
-              <p className="text-sm text-gray-600">
-                {venue.address}, {venue.hood}
-              </p>
-            </>
-          )}
-
-          {event.types && event.types.length > 0 && (
-            <p>🎨 {event.types.join(', ')}</p>
-          )}
-        </div>
+        
+        {venue && (
+          <>
+            <p>
+              📍 <Link
+                href={`/venues/${venue.slug}`}
+                className="underline hover:text-black"
+              >
+                {venue.name}
+              </Link>
+            </p>
+            <p className="text-sm text-gray-600">
+              {venue.address}, {venue.hood}
+            </p>
+          </>
+        )}
+        
+        {event.types && event.types.length > 0 && (
+          <p>🎨 {event.types.join(', ')}</p>
+        )}
 
         <p className="text-gray-800 text-sm mt-6 leading-relaxed whitespace-pre-wrap">{event.descr}</p>
 
