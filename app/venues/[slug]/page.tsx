@@ -68,11 +68,9 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
             {venue.working_hours && (
               <div className="border-t pt-2">
                 <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
-                <ul className="list-disc list-inside">
                   {venue.working_hours.split('\n').map((line, i) => (
                     <li key={i}>{line}</li>
                   ))}
-                </ul>
               </div>
             )}
           </div>
