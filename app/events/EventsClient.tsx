@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../utils';
+import { MapPin } from 'lucide-react';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -180,7 +181,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                   </Link>
                   {event.venue && (
                     <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-                      <map-pin className="w-4 h-4" />
+                      <MapPin className="w-4 h-4" />
                       {event.venue.name}, {event.venue.hood}
                     </div>
                   )}
