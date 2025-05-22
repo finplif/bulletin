@@ -4,8 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../utils';
-import { Watch } from 'lucide-react';
-
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 
@@ -171,9 +169,8 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
             <ul className="divide-y divide-gray-300/30">
               {group.map((event, index) => (
                 <li key={index} className="py-5">
-                  <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-                    <Watch className="w-4 h-4" />
-                    {event.time_start} – {event.time_end}
+                  <div className="text-sm text-gray-500 mb-1">
+                    🕒 {event.time_start} – {event.time_end}
                   </div>
                   <Link
                     href={`/events/${event.slug}`}
