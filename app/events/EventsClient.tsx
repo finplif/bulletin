@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../utils';
-import { watch, ear, map, map-pin } from 'lucide-react';
+import { watch, ear, map, 'map-pin' } from 'lucide-react';
 
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
