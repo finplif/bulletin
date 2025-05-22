@@ -170,7 +170,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
               {group.map((event, index) => (
                 <li key={index} className="py-5">
                   <div className="text-sm text-gray-500 mb-1">
-                    🕒 {event.time_start} – {event.time_end}
+                    🕰 {event.time_start} – {event.time_end}
                   </div>
                   <Link
                     href={`/events/${event.slug}`}
@@ -180,12 +180,12 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                   </Link>
                   {event.venue && (
                     <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-                      <span>📍</span>
+                      <span>☂️</span>
                       {event.venue.name}, {event.venue.hood}
                     </div>
                   )}
                   <div className="text-sm text-gray-500 italic mb-1">
-                    🎨 {event.types?.join(', ')}
+                    🌞 {event.types?.join(', ')}
                   </div>
                   <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
                   {event.link && (
