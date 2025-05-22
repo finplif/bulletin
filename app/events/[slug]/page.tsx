@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../../utils';
-import { Watch } from 'lucide-react';
 
 const dmSans = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '700'] });
 export const dynamic = 'force-dynamic';
@@ -49,8 +48,9 @@ const Page = async ({ params }: PageProps) => {
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{event.title}</h1>
         <p className="text-sm text-gray-600 mb-6">{formatDate(event.date)}</p>
 
-        <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-          <p> <Watch className="w-4 h-4" /> {event.time_start} – {event.time_end}</p>
+        <div className="text-sm text-gray-500 mb-1">
+          🕒 {event.time_start} – {event.time_end}
+        </div>
 
           {venue && (
             <>
