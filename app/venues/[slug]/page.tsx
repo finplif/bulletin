@@ -74,7 +74,7 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
                       {i % 2 === 0 ? (
                         <span className="mr-1">•</span>
                       ) : (
-                        <span className="mr-1 w-4" /> // empty space to align
+                        <span className="mr-1 w-4"/> // empty space to align
                       )}
                       <span>{line}</span>
                     </li>
