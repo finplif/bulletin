@@ -63,7 +63,7 @@ const Page = async ({ params }: PageProps) => {
               </Link>
             </p>
             <p className="text-sm text-gray-600">
-              {venue.address}, {venue.hood}
+              🔖 {venue.address}, {venue.hood}
             </p>
           </>
         )}
