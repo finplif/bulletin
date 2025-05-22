@@ -91,14 +91,14 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
               {upcoming.map((event, index) => (
                 <li key={index} className="border-b pb-4">
                   <p className="text-sm text-gray-500 mb-1">
-                    🕒 {event.time_start} – {event.time_end}
+                    🕰 {event.time_start} – {event.time_end}
                   </p>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
                     {event.title}
                   </h3>
                   <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
                   {event.types && event.types.length > 0 && (
-                    <p>🎨 {event.types.join(', ')}</p>
+                    <p>🌞 {event.types.join(', ')}</p>
                   )}
                   <p className="text-sm text-gray-700 mt-1">{event.descr}</p>
                   {event.link && (
