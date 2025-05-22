@@ -14,6 +14,17 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
+function formatTimeTo12Hour(time: string): string {
+  const [hourStr, minuteStr] = time.split(':');
+  let hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const isPM = hour >= 12;
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  const formattedMinute = minute === 0 ? '' : `:${minuteStr}`;
+  const suffix = isPM ? 'PM' : 'AM';
+  return `${formattedHour}${formattedMinute}${suffix}`;
+}
+
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', {
     weekday: 'long',
@@ -91,7 +102,7 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
               {upcoming.map((event, index) => (
                 <li key={index} className="border-b pb-4">
                   <p className="text-sm text-gray-500 mb-1">
-                    🕰 {event.time_start} – {event.time_end}
+                    🕰 {formatTimeTo12Hour(event.time_start)} – {formatTimeTo12Hour(event.time_end)}
                   </p>
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
                     {event.title}
