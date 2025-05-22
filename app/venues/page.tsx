@@ -33,6 +33,7 @@ export default async function Page() {
               >
                 {venue.name}
               </Link>
+              <p className="text-sm text-gray-600">{venue.hood}</p>
             </li>
           ))}
         </ul>
