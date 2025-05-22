@@ -34,10 +34,17 @@ export default async function Page({ params }: PageProps) {
 
   if (!venue) return notFound();
 
-  const matching = events.filter(e => e.venue?.name === venue.name);
-  const now = new Date();
-  const upcoming = matching.filter(e => new Date(e.date) >= now);
-  const past = matching.filter(e => new Date(e.date) < now);
+  const matching = events
+    .filter(e => e.venue?.name === venue.name)
+    .sort((a, b) => {
+      const dateA = new Date(`${a.date} ${a.time_start}`);
+      const dateB = new Date(`${b.date} ${b.time_start}`);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+const now = new Date();
+const upcoming = matching.filter(e => new Date(`${e.date}T${e.time_start}`) >= now);
+const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
 
   return (
     <main className="min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F]">
