@@ -163,46 +163,54 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
       </div>
 
       <div className="space-y-12">
-        {Object.entries(groupedByDate).map(([date, group]) => (
-          <section key={date}>
-            <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
-            <ul className="divide-y divide-gray-300/30">
-              {group.map((event, index) => (
-                <li key={index} className="py-5">
-                  <div className="text-sm text-gray-500 mb-1">
-                    🕰 {event.time_start} – {event.time_end}
-                  </div>
-                  <Link
-                    href={`/events/${event.slug}`}
-                    className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
-                  >
-                    {event.title}
-                  </Link>
-                  {event.venue && (
-                    <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-                      <span>☂️</span>
-                      {event.venue.name}, {event.venue.hood}
+        {Object.entries(groupedByDate).map(([date, group]) => {
+          const sortedGroup = group.sort((a, b) => {
+            const [aHour, aMinute] = a.time_start.split(':').map(Number);
+            const [bHour, bMinute] = b.time_start.split(':').map(Number);
+            return aHour * 60 + aMinute - (bHour * 60 + bMinute);
+          });
+
+          return (
+            <section key={date}>
+              <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
+              <ul className="divide-y divide-gray-300/30">
+                {sortedGroup.map((event, index) => (
+                  <li key={index} className="py-5">
+                    <div className="text-sm text-gray-500 mb-1">
+                      🕰 {event.time_start} – {event.time_end}
                     </div>
-                  )}
-                  <div className="text-sm text-gray-500 italic mb-1">
-                    🌞 {event.types?.join(', ')}
-                  </div>
-                  <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
-                  {event.link && (
-                    <a
-                      href={event.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#4B6E47] underline text-sm"
+                    <Link
+                      href={`/events/${event.slug}`}
+                      className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                     >
-                      more info ↗
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+                      {event.title}
+                    </Link>
+                    {event.venue && (
+                      <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
+                        <span>☂️</span>
+                        {event.venue.name}, {event.venue.hood}
+                      </div>
+                    )}
+                    <div className="text-sm text-gray-500 italic mb-1">
+                      🌞 {event.types?.join(', ')}
+                    </div>
+                    <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
+                    {event.link && (
+                      <a
+                        href={event.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#4B6E47] underline text-sm"
+                      >
+                        more info ↗
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
       </div>
     </main>
   );
