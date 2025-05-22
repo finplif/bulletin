@@ -28,6 +28,17 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
+function formatTimeTo12Hour(time: string): string {
+  const [hourStr, minuteStr] = time.split(':');
+  let hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const isPM = hour >= 12;
+  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
+  const formattedMinute = minute === 0 ? '' : `:${minuteStr}`;
+  const suffix = isPM ? 'PM' : 'AM';
+  return `${formattedHour}${formattedMinute}${suffix}`;
+}
+
 function formatDate(dateString: string): string {
   const [year, month, day] = dateString.split('-').map(Number);
   const date = new Date(year, month - 1, day);
@@ -177,7 +188,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
                 {sortedGroup.map((event, index) => (
                   <li key={index} className="py-5">
                     <div className="text-sm text-gray-500 mb-1">
-                      🕰 {event.time_start} – {event.time_end}
+                      🕰 {formatTimeTo12Hour(event.time_start)} – {formatTimeTo12Hour(event.time_end)}
                     </div>
                     <Link
                       href={`/events/${event.slug}`}
