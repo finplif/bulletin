@@ -40,48 +40,18 @@ function formatDate(dateString: string): string {
 }
 
 function getWeekday(dateString: string): string {
-  const date = new Date(`${dateString}T00:00:00Z`);
-  return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
-}
-
-function parseTimeTo24Hour(time: string): string {
-  if (!time.includes('AM') && !time.includes('PM')) return time; // already 24h format
-
-  const [raw, modifier] = time.split(' ');
-  let [hours, minutes] = raw.split(':').map(Number);
-
-  if (modifier === 'PM' && hours < 12) hours += 12;
-  if (modifier === 'AM' && hours === 12) hours = 0;
-
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
 function getTimeBucket(time: string): string {
-  let hour = 0;
-  let minute = 0;
-
-  // tolerate both "7:30 PM" and "7:30PM"
-  const ampmMatch = time.trim().toUpperCase().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/);
-  if (ampmMatch) {
-    hour = parseInt(ampmMatch[1], 10);
-    minute = ampmMatch[2] ? parseInt(ampmMatch[2], 10) : 0;
-    const meridiem = ampmMatch[3];
-
-    if (meridiem === 'PM' && hour !== 12) hour += 12;
-    if (meridiem === 'AM' && hour === 12) hour = 0;
-  } else {
-    // fallback to 24-hour format like "14:30"
-    const [h, m] = time.split(':').map(Number);
-    hour = h;
-    minute = m || 0;
-  }
-
+  const [hour, minute] = time.split(':').map(Number);
   const totalMinutes = hour * 60 + minute;
-
-  if (totalMinutes < 600) return 'Morning';     // before 10:00
-  if (totalMinutes < 840) return 'Midday';      // before 14:00
-  if (totalMinutes < 1080) return 'Afternoon';  // before 18:00
-  return 'Evening';                             // 18:00+
+  if (totalMinutes < 600) return 'Morning';
+  if (totalMinutes < 840) return 'Midday';
+  if (totalMinutes < 1080) return 'Afternoon';
+  return 'Evening';
 }
 
 export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) {
@@ -89,13 +59,11 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedWeekdays, setSelectedWeekdays] = useState<string[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<string>('');
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>('');
 
   const hoods = Array.from(new Set(allEvents.map(e => e.venue?.hood ?? ''))).sort();
-  const types = Array.from(
-    new Set(allEvents.flatMap(e => e.types ?? []))
-  ).sort();
+  const types = Array.from(new Set(allEvents.flatMap(e => e.types ?? []))).sort();
   const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeRanges = ['Morning', 'Midday', 'Afternoon', 'Evening'];
 
@@ -112,27 +80,14 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   };
 
   const now = new Date();
-  const futureEvents = allEvents
-    .filter(e => new Date(`${e.date}T23:59:59`) >= now)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const futureEvents = allEvents.filter(e => new Date(`${e.date}T23:59:59`) >= now);
 
   const filteredEvents = futureEvents.filter(e => {
-    const hoodMatch =
-      selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
-  
-    const typeMatch =
-      selectedTypes.length === 0 ||
-      (Array.isArray(e.types) && selectedTypes.some(type => e.types.includes(type)));
-  
-    const weekdayMatch =
-      selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
-  
-    const timeMatch =
-      selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
-  
-    const dateMatch =
-      !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
-  
+    const hoodMatch = selectedHoods.length === 0 || selectedHoods.includes(e.venue?.hood ?? '');
+    const typeMatch = selectedTypes.length === 0 || e.types?.some(type => selectedTypes.includes(type));
+    const weekdayMatch = selectedWeekdays.length === 0 || selectedWeekdays.includes(getWeekday(e.date));
+    const timeMatch = selectedTimes.length === 0 || selectedTimes.includes(getTimeBucket(e.time_start));
+    const dateMatch = !startDate || new Date(e.date).toISOString().split('T')[0] === startDate;
     return hoodMatch && typeMatch && weekdayMatch && timeMatch && dateMatch;
   });
 
