@@ -49,13 +49,13 @@ const Page = async ({ params }: PageProps) => {
         <p className="text-sm text-gray-600 mb-6">{formatDate(event.date)}</p>
 
         <div className="text-sm text-gray-500 mb-1">
-          🕒 {event.time_start} – {event.time_end}
+          🕰 {event.time_start} – {event.time_end}
         </div>
         
         {venue && (
           <>
             <p>
-              📍 <Link
+              ☂️ <Link
                 href={`/venues/${venue.slug}`}
                 className="underline hover:text-black"
               >
@@ -69,7 +69,7 @@ const Page = async ({ params }: PageProps) => {
         )}
         
         {event.types && event.types.length > 0 && (
-          <p>🎨 {event.types.join(', ')}</p>
+          <p>🌞 {event.types.join(', ')}</p>
         )}
 
         <p className="text-gray-800 text-sm mt-6 leading-relaxed whitespace-pre-wrap">{event.descr}</p>
