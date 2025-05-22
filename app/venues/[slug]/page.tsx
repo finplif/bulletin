@@ -54,12 +54,27 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
         </Link>
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
-          <div className="text-sm text-gray-600 mb-6">
-            <p>{venue.address}</p>
-            <p>{venue.hood}</p>
-            {venue.working_hours && venue.working_hours.split('\n').map((line, i) => (
-              <p key={i}>{line}</p>
-            ))}
+          <div className="text-sm text-gray-700 mb-6 space-y-2 border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+            <div>
+              <h3 className="text-xs uppercase text-gray-500 tracking-wide">address</h3>
+              <p>{venue.address}</p>
+            </div>
+          
+            <div className="border-t pt-2">
+              <h3 className="text-xs uppercase text-gray-500 tracking-wide">neighborhood</h3>
+              <p>{venue.hood}</p>
+            </div>
+          
+            {venue.working_hours && (
+              <div className="border-t pt-2">
+                <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
+                <ul className="list-disc list-inside">
+                  {venue.working_hours.split('\n').map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
         {upcoming.length > 0 && (
