@@ -13,14 +13,20 @@ function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 }
 
-function formatTimeTo12Hour(time: string): string {
+function formatTimeTo12Hour(time: string | undefined): string {
+  if (!time || !time.includes(':')) return ''; // handle invalid or missing time
+
   const [hourStr, minuteStr] = time.split(':');
-  let hour = parseInt(hourStr, 10);
+  const hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
+
+  if (isNaN(hour) || isNaN(minute)) return ''; // ensure numbers
+
   const isPM = hour >= 12;
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   const formattedMinute = minute === 0 ? '' : `:${minuteStr}`;
   const suffix = isPM ? 'PM' : 'AM';
+
   return `${formattedHour}${formattedMinute}${suffix}`;
 }
 
