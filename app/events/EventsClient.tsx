@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { DM_Sans } from 'next/font/google';
 import { getEvents } from '../utils';
@@ -29,19 +29,15 @@ function slugify(text: string): string {
 }
 
 function formatTimeTo12Hour(time: string | undefined): string {
-  if (!time || !time.includes(':')) return ''; // handle invalid or missing time
-
+  if (!time || !time.includes(':')) return '';
   const [hourStr, minuteStr] = time.split(':');
   const hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
-
-  if (isNaN(hour) || isNaN(minute)) return ''; // ensure numbers
-
+  if (isNaN(hour) || isNaN(minute)) return '';
   const isPM = hour >= 12;
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
   const formattedMinute = minute === 0 ? '' : `:${minuteStr}`;
   const suffix = isPM ? 'PM' : 'AM';
-
   return `${formattedHour}${formattedMinute}${suffix}`;
 }
 
@@ -109,7 +105,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
   });
 
   const groupedByDate = filteredEvents.reduce((acc, event) => {
-    const dateKey = formatDate(event.date);
+    const dateKey = event.date; // use ISO for sorting
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push(event);
     return acc;
@@ -162,13 +158,7 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
             onChange={(e) => setStartDate(e.target.value)}
             className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white text-gray-800"
           />
-         {(
-            selectedHoods.length > 0 ||
-            selectedTypes.length > 0 ||
-            selectedWeekdays.length > 0 ||
-            selectedTimes.length > 0 ||
-            startDate !== ''
-          ) && (
+         {(selectedHoods.length > 0 || selectedTypes.length > 0 || selectedWeekdays.length > 0 || selectedTimes.length > 0 || startDate !== '') && (
             <button
               onClick={clearFilters}
               className="ml-auto px-3 py-1.5 rounded-full text-sm bg-black text-white hover:bg-gray-800 transition"
@@ -180,54 +170,56 @@ export default function EventsClient({ allEvents }: { allEvents: EventItem[] }) 
       </div>
 
       <div className="space-y-12">
-        {Object.entries(groupedByDate).map(([date, group]) => {
-          const sortedGroup = group.sort((a, b) => {
-            const [aHour, aMinute] = a.time_start.split(':').map(Number);
-            const [bHour, bMinute] = b.time_start.split(':').map(Number);
-            return aHour * 60 + aMinute - (bHour * 60 + bMinute);
-          });
+        {Object.entries(groupedByDate)
+          .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime())
+          .map(([date, group]) => {
+            const sortedGroup = group.sort((a, b) => {
+              const [aHour, aMinute] = a.time_start.split(':').map(Number);
+              const [bHour, bMinute] = b.time_start.split(':').map(Number);
+              return aHour * 60 + aMinute - (bHour * 60 + bMinute);
+            });
 
-          return (
-            <section key={date}>
-              <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{date}</h2>
-              <ul className="divide-y divide-gray-300/30">
-                {sortedGroup.map((event, index) => (
-                  <li key={index} className="py-5">
-                    <div className="text-sm text-gray-500 mb-1">
-                      🕰 {formatTimeTo12Hour(event.time_start)} – {formatTimeTo12Hour(event.time_end)}
-                    </div>
-                    <Link
-                      href={`/events/${event.slug}`}
-                      className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
-                    >
-                      {event.title}
-                    </Link>
-                    {event.venue && (
-                      <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
-                        <span>☂️</span>
-                        {event.venue.name}, {event.venue.hood}
+            return (
+              <section key={date}>
+                <h2 className="text-2xl font-semibold mb-4 border-b pb-1 text-gray-800">{formatDate(date)}</h2>
+                <ul className="divide-y divide-gray-300/30">
+                  {sortedGroup.map((event, index) => (
+                    <li key={index} className="py-5">
+                      <div className="text-sm text-gray-500 mb-1">
+                        🕰 {formatTimeTo12Hour(event.time_start)} – {formatTimeTo12Hour(event.time_end)}
                       </div>
-                    )}
-                    <div className="text-sm text-gray-500 italic mb-1">
-                      🌞 {event.types?.join(', ')}
-                    </div>
-                    <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
-                    {event.link && (
-                      <a
-                        href={event.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#4B6E47] underline text-sm"
+                      <Link
+                        href={`/events/${event.slug}`}
+                        className="text-lg font-medium text-gray-900 mb-0.5 hover:underline"
                       >
-                        more info ↗
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+                        {event.title}
+                      </Link>
+                      {event.venue && (
+                        <div className="text-sm text-gray-500 mb-1 flex items-center gap-1">
+                          <span>☂️</span>
+                          {event.venue.name}, {event.venue.hood}
+                        </div>
+                      )}
+                      <div className="text-sm text-gray-500 italic mb-1">
+                        🌞 {event.types?.join(', ')}
+                      </div>
+                      <p className="text-gray-700 text-sm leading-snug mb-2">{event.descr}</p>
+                      {event.link && (
+                        <a
+                          href={event.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#4B6E47] underline text-sm"
+                        >
+                          more info ↗
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
       </div>
     </main>
   );
