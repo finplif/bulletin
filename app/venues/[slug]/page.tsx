@@ -25,10 +25,10 @@ function formatTimeTo12Hour(time: string | undefined): string {
 
   const isPM = hour >= 12;
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  const formattedMinute = minute === 0 ? '' : :${minuteStr};
+  const formattedMinute = minute === 0 ? '' : `:${minuteStr}`;
   const suffix = isPM ? 'PM' : 'AM';
 
-  return ${formattedHour}${formattedMinute}${suffix};
+  return `${formattedHour}${formattedMinute}${suffix}`;
 }
 
 function formatDate(dateString: string): string {
@@ -54,14 +54,14 @@ export default async function Page({ params }: PageProps) {
   const matching = events
     .filter(e => e.venue?.name === venue.name)
     .sort((a, b) => {
-      const dateA = new Date(${a.date} ${a.time_start});
-      const dateB = new Date(${b.date} ${b.time_start});
+      const dateA = new Date(`${a.date} ${a.time_start}`);
+      const dateB = new Date(`${b.date} ${b.time_start}`);
       return dateA.getTime() - dateB.getTime();
     });
 
 const now = new Date();
-const upcoming = matching.filter(e => new Date(${e.date}T${e.time_start}) >= now);
-const past = matching.filter(e => new Date(${e.date}T${e.time_start}) < now);
+const upcoming = matching.filter(e => new Date(`${e.date}T${e.time_start}`) >= now);
+const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
 
   return (
     <main className="min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F]">
