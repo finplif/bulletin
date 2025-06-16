@@ -59,47 +59,47 @@ export default async function Page({ params }: PageProps) {
       return dateA.getTime() - dateB.getTime();
     });
 
-const now = new Date();
-const upcoming = matching.filter(e => new Date(`${e.date}T${e.time_start}`) >= now);
-const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
+  const now = new Date();
+  const upcoming = matching.filter(e => new Date(`${e.date}T${e.time_start}`) >= now);
+  const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
 
   return (
-    <main className="min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F]">
+    <main className={`min-h-screen bg-[#F9F6F8] px-6 text-[#1F1F1F] ${dmSans.className}`}>
       <div className="max-w-2xl mx-auto">
         <Link href="/venues" className="text-sm underline text-gray-600 block mb-6">
           ← all venues
         </Link>
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
-          <div className="text-sm text-gray-700 mb-6 space-y-2 border border-gray-200 rounded-md p-4 bg-white shadow-sm">
-            <div>
-              <h3 className="text-xs uppercase text-gray-500 tracking-wide">address</h3>
-              <p>{venue.address}</p>
-            </div>
-          
-            <div className="border-t pt-2">
-              <h3 className="text-xs uppercase text-gray-500 tracking-wide">neighborhood</h3>
-              <p>{venue.hood}</p>
-            </div>
-          
-            {venue.working_hours && (
-              <div className="border-t pt-2">
-                <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
-                <ul className="space-y-1">
-                  {venue.working_hours.split('\n').map((line, i) => (
-                    <li key={i} className="flex items-start">
-                      {i % 2 === 0 ? (
-                        <span className="mr-1">•</span>
-                      ) : (
-                        <span className="mr-1 w-4"/> // empty space to align
-                      )}
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+        <div className="text-sm text-gray-700 mb-6 space-y-2 border border-gray-200 rounded-md p-4 bg-white shadow-sm">
+          <div>
+            <h3 className="text-xs uppercase text-gray-500 tracking-wide">address</h3>
+            <p>{venue.address}</p>
           </div>
+
+          <div className="border-t pt-2">
+            <h3 className="text-xs uppercase text-gray-500 tracking-wide">neighborhood</h3>
+            <p>{venue.hood}</p>
+          </div>
+
+          {venue.working_hours && (
+            <div className="border-t pt-2">
+              <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
+              <ul className="space-y-1">
+                {venue.working_hours.split('\n').map((line, i) => (
+                  <li key={i} className="flex items-start">
+                    {i % 2 === 0 ? (
+                      <span className="mr-1">•</span>
+                    ) : (
+                      <span className="mr-1 w-4" />
+                    )}
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
 
         {upcoming.length > 0 && (
           <section className="mb-10">
@@ -136,16 +136,18 @@ const past = matching.filter(e => new Date(`${e.date}T${e.time_start}`) < now);
 
         {past.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold mb-4">past</h2>
-            <ul className="space-y-4">
-              {past.map((event, index) => (
-                <li key={index} className="border-b pb-3">
-                  <p className="text-sm text-gray-500 mb-0.5">
-                    {event.date} — {event.title}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <details>
+              <summary className="cursor-pointer text-xl font-semibold mb-4 hover:underline">past</summary>
+              <ul className="space-y-4 mt-4">
+                {past.map((event, index) => (
+                  <li key={index} className="border-b pb-3">
+                    <p className="text-sm text-gray-500 mb-0.5">
+                      {event.date} — {event.title}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </details>
           </section>
         )}
       </div>
