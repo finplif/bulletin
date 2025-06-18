@@ -62,6 +62,50 @@ export async function getEvents() {
   }));
 }
 
+export async function getExhibitions() {
+  const { data, error } = await supabase
+    .from('exhibitions')
+    .select(`
+      id,
+      title,
+      date,
+      time_start,
+      time_end,
+      types,
+      descr,
+      link,
+      slug,
+      gallery_id,
+      gallery (
+        name,
+        address,
+        hood,
+        slug,
+        working_hours
+      )
+    `);
+
+  if (error) {
+    console.error('Error fetching exhibitions:', error);
+    return [];
+  }
+
+  return data.map((exhibition: any) => ({
+    id: exhibition.id,
+    title: exhibition.title,
+    date: exhibition.date,
+    time_start: exhibition.time_start,
+    time_end: exhibition.time_end,
+    types: exhibition.types ?? [],
+    descr: exhibition.descr,
+    link: exhibition.link,
+    slug: exhibition.slug,
+    gallery: exhibition.gallery && exhibition.gallery.name
+      ? exhibition.gallery
+      : { name: '', address: '', hood: '', slug: '', working_hours: '' }
+  }));
+}
+
 export async function getVenues(): Promise<VenueItem[]> {
   const { data, error } = await supabase
     .from('venues')
@@ -79,5 +123,25 @@ export async function getVenues(): Promise<VenueItem[]> {
     hood: v.hood,
     slug: v.slug,
     working_hours: v.working_hours || '',
+  }));
+}
+
+export async function getGalleries(): Promise<VenueItem[]> {
+  const { data, error } = await supabase
+    .from('galleries')
+    .select('id, name, address, hood, slug, working_hours');
+
+  if (error) {
+    console.error('Error fetching galleries:', error);
+    return [];
+  }
+
+  return data.map(g => ({
+    id: g.id,
+    name: g.name,
+    address: g.address,
+    hood: g.hood,
+    slug: g.slug,
+    working_hours: g.working_hours || '',
   }));
 }
