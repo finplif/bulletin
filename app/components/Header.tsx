@@ -15,7 +15,7 @@ export default function Header() {
             pathname === '/events' ? 'text-black' : 'text-gray-600'
           }`}
         >
-          Events
+          events
         </Link>
         <Link
           href="/venues"
@@ -23,7 +23,15 @@ export default function Header() {
             pathname === '/venues' ? 'text-black' : 'text-gray-600'
           }`}
         >
-          Venues
+          venues
+        </Link>
+        <Link
+          href="/exhibitions"
+          className={`text-sm font-medium hover:underline ${
+            pathname === '/exhibitions' ? 'text-black' : 'text-gray-600'
+          }`}
+        >
+          exhibitions
         </Link>
       </nav>
     </header>
