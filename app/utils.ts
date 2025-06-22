@@ -146,6 +146,5 @@ export async function getGalleries(): Promise<VenueItem[]> {
     hood: g.hood,
     slug: g.slug,
     working_hours: g.working_hours || '',
-    website: g.website,
   }));
 }
