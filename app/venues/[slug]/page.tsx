@@ -109,7 +109,7 @@ export default async function Page({ params }: PageProps) {
               rel="noopener noreferrer"
               className="text-[#4B6E47] underline text-sm"
             >
-              {venue.website}
+              the link :)
             </a>
           </div>
         )}
