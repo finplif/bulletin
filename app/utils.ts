@@ -37,7 +37,8 @@ export async function getEvents() {
         address,
         hood,
         slug,
-        working_hours
+        working_hours,
+        website
       )
     `);
 
@@ -58,7 +59,7 @@ export async function getEvents() {
     slug: event.slug,
     venue: event.venue && event.venue.name
       ? event.venue
-      : { name: '', address: '', hood: '', slug: '', working_hours: '' }
+      : { name: '', address: '', hood: '', slug: '', working_hours: '', website: '' }
   }));
 }
 
@@ -109,7 +110,7 @@ export async function getExhibitions() {
 export async function getVenues(): Promise<VenueItem[]> {
   const { data, error } = await supabase
     .from('venues')
-    .select('id, name, address, hood, slug, working_hours');
+    .select('id, name, address, hood, slug, working_hours, website');
 
   if (error) {
     console.error('Error fetching venues:', error);
@@ -122,7 +123,8 @@ export async function getVenues(): Promise<VenueItem[]> {
     address: v.address,
     hood: v.hood,
     slug: v.slug,
-    working_hours: v.working_hours || '',
+    working_hours: v.working_hours || ''
+    website: v.website,
   }));
 }
 
