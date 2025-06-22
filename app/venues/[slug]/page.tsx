@@ -72,47 +72,48 @@ export default async function Page({ params }: PageProps) {
 
         <h1 className="text-3xl font-bold mb-2 tracking-tight">{venue.name}</h1>
         <div className="text-sm text-gray-700 mb-6 space-y-2 border border-gray-200 rounded-md p-4 bg-white shadow-sm">
-          <div>
-            <h3 className="text-xs uppercase text-gray-500 tracking-wide">address</h3>
-            <p>{venue.address}</p>
-          </div>
-
-          <div className="border-t pt-2">
-            <h3 className="text-xs uppercase text-gray-500 tracking-wide">neighborhood</h3>
-            <p>{venue.hood}</p>
-          </div>
-
-          {venue.working_hours && (
-            <div className="border-t pt-2">
-              <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
-              <ul className="space-y-1">
-                {venue.working_hours.split('\n').map((line, i) => (
-                  <li key={i} className="flex items-start">
-                    {i % 2 === 0 ? (
-                      <span className="mr-1">•</span>
-                    ) : (
-                      <span className="mr-1 w-4" />
-                    )}
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {venue.website && (
-            <div className="mt-4">
-              <a
-                href={venue.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#4B6E47] underline text-sm"
-              >
-                website link
-              </a>
-            </div>
-          )}
+        <div>
+          <h3 className="text-xs uppercase text-gray-500 tracking-wide">address</h3>
+          <p>{venue.address}</p>
         </div>
+      
+        <div className="border-t pt-2">
+          <h3 className="text-xs uppercase text-gray-500 tracking-wide">neighborhood</h3>
+          <p>{venue.hood}</p>
+        </div>
+      
+        {venue.working_hours && (
+          <div className="border-t pt-2">
+            <h3 className="text-xs uppercase text-gray-500 tracking-wide">hours</h3>
+            <ul className="space-y-1">
+              {venue.working_hours.split('\n').map((line, i) => (
+                <li key={i} className="flex items-start">
+                  {i % 2 === 0 ? (
+                    <span className="mr-1">•</span>
+                  ) : (
+                    <span className="mr-1 w-4" />
+                  )}
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      
+        {venue.website && (
+          <div className="border-t pt-2">
+            <h3 className="text-xs uppercase text-gray-500 tracking-wide">website</h3>
+            <a
+              href={venue.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#4B6E47] underline text-sm"
+            >
+              {venue.website}
+            </a>
+          </div>
+        )}
+      </div>
 
         {upcoming.length > 0 && (
           <section className="mb-10">
