@@ -99,6 +99,19 @@ export default async function Page({ params }: PageProps) {
               </ul>
             </div>
           )}
+
+          {venue.website && (
+            <div className="mt-4">
+              <a
+                href={venue.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#4B6E47] underline text-sm"
+              >
+                website link
+              </a>
+            </div>
+          )}
         </div>
 
         {upcoming.length > 0 && (
