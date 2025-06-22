@@ -12,6 +12,7 @@ export interface VenueItem {
   hood: string;
   slug: string;
   working_hours?: string;
+  website: string;
 }
 
 function slugify(text: string): string {
