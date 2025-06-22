@@ -125,7 +125,7 @@ export async function getVenues(): Promise<VenueItem[]> {
     hood: v.hood,
     slug: v.slug,
     working_hours: v.working_hours || '',
-    website: v.website,
+    website: v.website || '',
   }));
 }
 
