@@ -123,7 +123,7 @@ export async function getVenues(): Promise<VenueItem[]> {
     address: v.address,
     hood: v.hood,
     slug: v.slug,
-    working_hours: v.working_hours || ''
+    working_hours: v.working_hours || '',
     website: v.website,
   }));
 }
