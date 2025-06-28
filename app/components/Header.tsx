@@ -18,6 +18,8 @@ export default function Header() {
         <Link href="/venues" className={linkClass('/venues')}>venues</Link>
         <Link href="/exhibitions" className={linkClass('/exhibitions')}>exhibitions</Link>
         <Link href="/galleries" className={linkClass('/galleries')}>galleries</Link>
+        <div className="h-4 border-l border-gray-400 mx-2" />
+        <Link href="/about" className="font-medium">about us</Link>
       </nav>
     </header>
   );
